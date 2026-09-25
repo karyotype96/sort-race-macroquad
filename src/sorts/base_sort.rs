@@ -41,4 +41,6 @@ pub trait Sort {
 
     // returns true if the sort is finished
     fn is_finished(&self) -> bool;
+
+    fn get_name(&self) -> &'static str;
 }

@@ -85,4 +85,8 @@ impl Sort for SelectionSort {
     fn is_finished(&self) -> bool {
         self.move_index >= self.moves.len()
     }
+
+    fn get_name(&self) -> &'static str {
+        "Selection Sort"
+    }
 }

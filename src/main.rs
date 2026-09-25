@@ -6,8 +6,6 @@ use macroquad::prelude::*;
 use macroquad::ui::*;
 use macroquad::input::{KeyCode};
 
-use crate::sorts::base_sort::Sort;
-use crate::sorts::selection_sort::SelectionSort;
 use crate::state_info::program_state::ListType;
 use crate::state_info::program_state::ProgramState;
 use crate::styles::default_style;

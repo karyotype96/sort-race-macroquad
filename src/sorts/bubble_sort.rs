@@ -78,4 +78,8 @@ impl Sort for BubbleSort {
     fn is_finished(&self) -> bool {
         self.move_index >= self.moves.len()
     }
+
+    fn get_name(&self) -> &'static str {
+        "Bubble Sort"
+    }
 }
