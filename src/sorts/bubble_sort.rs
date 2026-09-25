@@ -1,4 +1,4 @@
-use crate::sorts::base_sort::{Sort, SortMove};
+use crate::sorts::base_sort::{Sort, SortMove, SwapData};
 
 #[derive(Default)]
 pub struct BubbleSort {
@@ -15,13 +15,16 @@ impl Sort for BubbleSort {
         self.move_index = 0;
 
         let mut pre_data = data.clone();
-        for i in 0..pre_data.len() {
+        for _ in 0..pre_data.len() {
             for j in 0..pre_data.len() - 1 {
                 if pre_data[j] > pre_data[j+1] {
                     let tmp = pre_data[j];
                     pre_data[j] = pre_data[j+1];
                     pre_data[j+1] = tmp;
-                    self.moves.push(SortMove::Swap(j, j+1));
+                    self.moves.push(SortMove::Swap(SwapData {
+                        index1: j,
+                        index2: j+1,
+                    }));
                 }
             }
         }
@@ -33,18 +36,41 @@ impl Sort for BubbleSort {
         }
 
         match self.moves[self.move_index] {
-            SortMove::Read(index) => {
-                self.selected = Some(index);
+            SortMove::Read(mv) => {
+                self.selected = Some(mv.index);
             }
-            SortMove::Swap(index1, index2) => {
+            SortMove::Swap(mv) => {
                 self.selected = None;
-                let tmp = self.data[index1];
-                self.data[index1] = self.data[index2];
-                self.data[index2] = tmp;
+                let tmp = self.data[mv.index1];
+                self.data[mv.index1] = self.data[mv.index2];
+                self.data[mv.index2] = tmp;
             }
-            SortMove::Write(index, value) => {
+            SortMove::Write(mv) => {
                 self.selected = None;
-                self.data[index] = value;
+                self.data[mv.index] = mv.to;
+            }
+        }
+    }
+
+    fn withdraw_sort(&mut self) {
+        if self.move_index == 0 {
+            return;
+        }
+
+        self.move_index -= 1;
+        match self.moves[self.move_index] {
+            SortMove::Read(mv) => {
+                self.selected = Some(mv.index);
+            }
+            SortMove::Swap(mv) => {
+                self.selected = None;
+                let tmp = self.data[mv.index1];
+                self.data[mv.index1] = self.data[mv.index2];
+                self.data[mv.index2] = tmp;
+            }
+            SortMove::Write(mv) => {
+                self.selected = None;
+                self.data[mv.index] = mv.from;
             }
         }
     }

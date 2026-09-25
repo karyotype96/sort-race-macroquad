@@ -1,4 +1,4 @@
-use crate::sorts::base_sort::{Sort, SortMove};
+use crate::sorts::base_sort::{ReadData, Sort, SortMove, WriteData};
 
 #[derive(Default)]
 pub struct InsertionSort {
@@ -16,22 +16,32 @@ impl Sort for InsertionSort {
 
         let mut pre_data = data.clone();
         for i in 1..pre_data.len()-1 {
-            self.moves.push(SortMove::Read(i));
+            self.moves.push(SortMove::Read(ReadData { index: i }));
             let key = pre_data[i];
 
             for j in (0..i).rev() {
                 if pre_data[j] > key {
+                    let from = pre_data[j];
                     pre_data[j] = key;
-                    self.moves.push(SortMove::Write(j, key));
+                    self.moves.push(SortMove::Write(WriteData { index: j, from, to: key }));
                     break;
                 }
 
+                let from = pre_data[j+1];
                 pre_data[j+1] = pre_data[j];
-                self.moves.push(SortMove::Write(j+1, pre_data[j+1]));
+                self.moves.push(SortMove::Write(WriteData { 
+                    index: j+1, 
+                    from, 
+                    to: pre_data[j+1]}));
 
                 if j == 0 {
+                    let from = pre_data[j];
                     pre_data[j] = key;
-                    self.moves.push(SortMove::Write(j, key));
+                    self.moves.push(SortMove::Write(WriteData {
+                        index: j,
+                        from,
+                        to: key
+                    }));
                 }
             }
 
@@ -44,18 +54,41 @@ impl Sort for InsertionSort {
         }
 
         match self.moves[self.move_index] {
-            SortMove::Read(index) => {
-                self.selected = Some(index);
+            SortMove::Read(mv) => {
+                self.selected = Some(mv.index);
             }
-            SortMove::Swap(index1, index2) => {
+            SortMove::Swap(mv) => {
                 self.selected = None;
-                let tmp = self.data[index1];
-                self.data[index1] = self.data[index2];
-                self.data[index2] = tmp;
+                let tmp = self.data[mv.index1];
+                self.data[mv.index1] = self.data[mv.index2];
+                self.data[mv.index2] = tmp;
             }
-            SortMove::Write(index, value) => {
+            SortMove::Write(mv) => {
                 self.selected = None;
-                self.data[index] = value;
+                self.data[mv.index] = mv.to;
+            }
+        }
+    }
+
+    fn withdraw_sort(&mut self) {
+        if self.move_index == 0 {
+            return;
+        }
+
+        self.move_index -= 1;
+        match self.moves[self.move_index] {
+            SortMove::Read(mv) => {
+                self.selected = Some(mv.index);
+            }
+            SortMove::Swap(mv) => {
+                self.selected = None;
+                let tmp = self.data[mv.index1];
+                self.data[mv.index1] = self.data[mv.index2];
+                self.data[mv.index2] = tmp;
+            }
+            SortMove::Write(mv) => {
+                self.selected = None;
+                self.data[mv.index] = mv.from;
             }
         }
     }

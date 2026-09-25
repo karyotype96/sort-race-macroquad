@@ -20,7 +20,7 @@ pub fn default_style() -> Skin {
 
     let label_style = root_ui()
         .style_builder()
-        .font_size(50)
+        .font_size(28)
         .text_color(WHITE)
         .build();
 
