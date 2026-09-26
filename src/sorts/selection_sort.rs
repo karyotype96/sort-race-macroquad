@@ -39,13 +39,11 @@ impl Sort for SelectionSort {
 
     fn advance_sort(&mut self) {
         if self.is_finished() {
+            self.move_index += 1;
             return
         }
 
         match self.moves[self.move_index] {
-            SortMove::Read(mv) => {
-                self.selected = Some(mv.index);
-            }
             SortMove::Swap(mv) => {
                 self.selected = None;
                 let tmp = self.data[mv.index1];
@@ -56,7 +54,10 @@ impl Sort for SelectionSort {
                 self.selected = None;
                 self.data[mv.index] = mv.to;
             }
+            _ => {}
         }
+
+        self.move_index += 1;
     }
 
     fn withdraw_sort(&mut self) {
@@ -65,10 +66,11 @@ impl Sort for SelectionSort {
         }
 
         self.move_index -= 1;
+        if self.is_finished() {
+            return;
+        }
+
         match self.moves[self.move_index] {
-            SortMove::Read(mv) => {
-                self.selected = Some(mv.index);
-            }
             SortMove::Swap(mv) => {
                 self.selected = None;
                 let tmp = self.data[mv.index1];
@@ -79,6 +81,7 @@ impl Sort for SelectionSort {
                 self.selected = None;
                 self.data[mv.index] = mv.from;
             }
+            _ => {}
         }
     }
 
@@ -88,5 +91,17 @@ impl Sort for SelectionSort {
 
     fn get_name(&self) -> &'static str {
         "Selection Sort"
+    }
+
+    fn get_data(&self) -> Vec<u32> {
+        self.data.clone()
+    }
+
+    fn get_current_move(&self) -> SortMove {
+        if self.is_finished() {
+            SortMove::None
+        } else {
+            self.moves[self.move_index]
+        }
     }
 }

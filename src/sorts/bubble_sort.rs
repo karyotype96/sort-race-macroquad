@@ -3,7 +3,6 @@ use crate::sorts::base_sort::{Sort, SortMove, SwapData};
 #[derive(Default)]
 pub struct BubbleSort {
     data: Vec<u32>,
-    selected: Option<usize>,
     moves: Vec<SortMove>,
     move_index: usize,
 }
@@ -32,24 +31,23 @@ impl Sort for BubbleSort {
 
     fn advance_sort(&mut self) {
         if self.is_finished() {
+            self.move_index += 1;
             return
         }
 
         match self.moves[self.move_index] {
-            SortMove::Read(mv) => {
-                self.selected = Some(mv.index);
-            }
             SortMove::Swap(mv) => {
-                self.selected = None;
                 let tmp = self.data[mv.index1];
                 self.data[mv.index1] = self.data[mv.index2];
                 self.data[mv.index2] = tmp;
             }
             SortMove::Write(mv) => {
-                self.selected = None;
                 self.data[mv.index] = mv.to;
             }
+            _ => {}
         }
+
+        self.move_index += 1;
     }
 
     fn withdraw_sort(&mut self) {
@@ -58,20 +56,20 @@ impl Sort for BubbleSort {
         }
 
         self.move_index -= 1;
+        if self.is_finished() {
+            return;
+        }
+
         match self.moves[self.move_index] {
-            SortMove::Read(mv) => {
-                self.selected = Some(mv.index);
-            }
             SortMove::Swap(mv) => {
-                self.selected = None;
                 let tmp = self.data[mv.index1];
                 self.data[mv.index1] = self.data[mv.index2];
                 self.data[mv.index2] = tmp;
             }
             SortMove::Write(mv) => {
-                self.selected = None;
                 self.data[mv.index] = mv.from;
             }
+            _ => {}
         }
     }
 
@@ -81,5 +79,17 @@ impl Sort for BubbleSort {
 
     fn get_name(&self) -> &'static str {
         "Bubble Sort"
+    }
+
+    fn get_data(&self) -> Vec<u32> {
+        self.data.clone()
+    }
+
+    fn get_current_move(&self) -> SortMove {
+        if self.is_finished() {
+            SortMove::None
+        } else {
+            self.moves[self.move_index]
+        }
     }
 }

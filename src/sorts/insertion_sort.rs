@@ -1,4 +1,4 @@
-use crate::sorts::base_sort::{ReadData, Sort, SortMove, WriteData};
+use crate::sorts::base_sort::{ReadData, Sort, SortMove, SwapData, WriteData};
 
 #[derive(Default)]
 pub struct InsertionSort {
@@ -15,48 +15,30 @@ impl Sort for InsertionSort {
         self.move_index = 0;
 
         let mut pre_data = data.clone();
-        for i in 1..pre_data.len()-1 {
-            self.moves.push(SortMove::Read(ReadData { index: i }));
-            let key = pre_data[i];
+        for i in 1..pre_data.len() {
+            let mut j = i;
+            self.moves.push(SortMove::Read(ReadData{ index: i }));
+            while j > 0 && pre_data[j - 1] > pre_data[j] {
+                let tmp = pre_data[j-1];
+                pre_data[j-1] = pre_data[j];
+                pre_data[j] = tmp;
+                self.moves.push(SortMove::Swap(SwapData {
+                    index1: j-1,
+                    index2: j
+                }));
 
-            for j in (0..i).rev() {
-                if pre_data[j] > key {
-                    let from = pre_data[j];
-                    pre_data[j] = key;
-                    self.moves.push(SortMove::Write(WriteData { index: j, from, to: key }));
-                    break;
-                }
-
-                let from = pre_data[j+1];
-                pre_data[j+1] = pre_data[j];
-                self.moves.push(SortMove::Write(WriteData { 
-                    index: j+1, 
-                    from, 
-                    to: pre_data[j+1]}));
-
-                if j == 0 {
-                    let from = pre_data[j];
-                    pre_data[j] = key;
-                    self.moves.push(SortMove::Write(WriteData {
-                        index: j,
-                        from,
-                        to: key
-                    }));
-                }
+                j -= 1;
             }
-
         }
     }
 
     fn advance_sort(&mut self) {
         if self.is_finished() {
+            self.move_index += 1;
             return
         }
 
         match self.moves[self.move_index] {
-            SortMove::Read(mv) => {
-                self.selected = Some(mv.index);
-            }
             SortMove::Swap(mv) => {
                 self.selected = None;
                 let tmp = self.data[mv.index1];
@@ -67,7 +49,10 @@ impl Sort for InsertionSort {
                 self.selected = None;
                 self.data[mv.index] = mv.to;
             }
+            _ => {}
         }
+
+        self.move_index += 1;
     }
 
     fn withdraw_sort(&mut self) {
@@ -76,20 +61,20 @@ impl Sort for InsertionSort {
         }
 
         self.move_index -= 1;
+        if self.is_finished() {
+            return;
+        }
+
         match self.moves[self.move_index] {
-            SortMove::Read(mv) => {
-                self.selected = Some(mv.index);
-            }
             SortMove::Swap(mv) => {
-                self.selected = None;
                 let tmp = self.data[mv.index1];
                 self.data[mv.index1] = self.data[mv.index2];
                 self.data[mv.index2] = tmp;
             }
             SortMove::Write(mv) => {
-                self.selected = None;
                 self.data[mv.index] = mv.from;
             }
+            _ => {}
         }
     }
 
@@ -99,5 +84,17 @@ impl Sort for InsertionSort {
 
     fn get_name(&self) -> &'static str {
         "Insertion Sort"
+    }
+
+    fn get_data(&self) -> Vec<u32> {
+        self.data.clone()
+    }
+
+    fn get_current_move(&self) -> SortMove {
+        if self.is_finished() {
+            SortMove::None
+        } else {
+            self.moves[self.move_index]
+        }
     }
 }
