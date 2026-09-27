@@ -1,7 +1,7 @@
 use macroquad::{input::{KeyCode, is_key_pressed}, rand::ChooseRandom};
 
 use crate::{helpers::viewports::get_viewports, sorts::{
-    base_sort::{Sort, SortType::{self, CocktailShaker}}, bubble_sort::BubbleSort, cocktail_shaker_sort::CocktailShakerSort, insertion_sort::*, selection_sort::*,
+    base_sort::{Sort, SortType::{self, CocktailShaker}}, bubble_sort::BubbleSort, cocktail_shaker_sort::CocktailShakerSort, comb_sort::CombSort, insertion_sort::*, selection_sort::*,
 }};
 
 pub const FRAME_RATE: f64 = 60.0;
@@ -58,6 +58,11 @@ impl WatchSortsState {
                 },
                 SortType::CocktailShaker => {
                     let mut sort = CocktailShakerSort::default();
+                    sort.init_sort(&data);
+                    sorts.push(Box::new(sort));
+                },
+                SortType::Comb => {
+                    let mut sort = CombSort::default();
                     sort.init_sort(&data);
                     sorts.push(Box::new(sort));
                 }

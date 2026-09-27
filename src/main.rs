@@ -31,6 +31,7 @@ async fn main() {
         SortType::Insertion,
         SortType::Bubble,
         SortType::CocktailShaker,
+        SortType::Comb,
     ];
 
     let mut watch_sorts_state = WatchSortsState::new(
