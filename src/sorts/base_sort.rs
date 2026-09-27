@@ -1,4 +1,6 @@
-use macroquad::{camera::{Camera2D, set_camera, set_default_camera}, color::{WHITE, hsl_to_rgb}, math::Rect, shapes::draw_rectangle, window::{screen_height, screen_width}};
+use macroquad::{camera::{Camera2D, set_camera, set_default_camera}, color::{WHITE, YELLOW, hsl_to_rgb}, math::Rect, shapes::{draw_rectangle, draw_rectangle_lines}, text::draw_text, window::{screen_height, screen_width}};
+
+use crate::helpers::map_range::map_range;
 
 #[derive(Clone, Copy, Debug)]
 pub struct ReadData {
@@ -37,7 +39,7 @@ impl SortType {
         match *self {
             SortType::Selection => "Selection Sort",
             SortType::Insertion => "Insertion Sort",
-            SortType::Bubble => "Bubble Sort"
+            SortType::Bubble => "Bubble Sort",
         }
     }
 }
@@ -59,6 +61,7 @@ pub trait Sort {
     fn get_name(&self) -> &'static str;
 
     fn get_data(&self) -> Vec<u32>;
+    fn get_move_count(&self) -> usize;
     fn get_current_move(&self) -> SortMove;
 
     fn draw_sort(&self, viewport_rect: Rect) {
@@ -105,7 +108,7 @@ pub trait Sort {
                 }
             }
 
-            let rectangle_height = gradient_value * screen_height();
+            let rectangle_height = map_range(gradient_value, 0.0, 1.0, 0.0, screen_height() - 50.0);
 
             let x_offset = (i as f32) * rectangle_width;
 
@@ -115,6 +118,12 @@ pub trait Sort {
                 rectangle_width, rectangle_height, 
                 rectangle_color
             );
+
+            draw_rectangle_lines(0.0, 0.0, screen_width(), screen_height(), 5.0, WHITE);
+            draw_text(format!("{}", self.get_name()), 25.0, 50.0, 48.0, WHITE);
+            if (self.is_finished()){
+                draw_text("Finished!", 25.0, 100.0, 48.0, YELLOW);
+            }
         }
 
         set_default_camera();

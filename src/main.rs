@@ -7,14 +7,18 @@ use macroquad::input::KeyCode::Insert;
 use macroquad::prelude::*;
 use macroquad::ui::*;
 use macroquad::input::{KeyCode};
+use macroquad::rand::ChooseRandom;
 
 use crate::sorts::base_sort::Sort;
 use crate::sorts::base_sort::SortType;
 use crate::sorts::bubble_sort::BubbleSort;
 use crate::sorts::insertion_sort::InsertionSort;
 use crate::sorts::selection_sort::SelectionSort;
+use crate::state_info::program_state::HIGH_SPEED;
 use crate::state_info::program_state::ListType;
 use crate::state_info::program_state::ProgramState;
+use crate::state_info::program_state::SLOW_SPEED;
+use crate::state_info::program_state::WatchSortsState;
 use crate::styles::default_style;
 
 fn window_conf() -> Conf {
@@ -35,32 +39,23 @@ async fn main() {
         SortType::Bubble,
     ];
 
-    let mut sort = InsertionSort::default();
-    
-    let test_data = vec![10, 1, 9, 2, 8, 3, 7, 4, 6, 5];
-    sort.init_sort(&test_data);
-
-    let mut selected_sorts: Vec<bool> = Vec::with_capacity(all_sorts.len());
+    let mut watch_sorts_state = WatchSortsState::new(
+        ListType::FullyRandom,
+        64,
+        &all_sorts,
+        HIGH_SPEED,
+    );
 
     let ui_skin = default_style::default_style();
     root_ui().push_skin(&ui_skin);
-
-    let aspect_ratio = screen_width() / screen_height();
 
     loop {
         if is_key_pressed(KeyCode::Escape) {
             break;
         }
 
-        let viewport_rect1 = Rect::new(0.0, 0.0, screen_width(), screen_height());
-        sort.draw_sort(viewport_rect1);
-
-        if is_key_pressed(KeyCode::Right){
-            sort.advance_sort();
-        }
-        if is_key_pressed(KeyCode::Left){
-            sort.withdraw_sort();
-        }
+        watch_sorts_state.control();
+        watch_sorts_state.draw();
 
         /* match currentState {
             ProgramState::SelectListType => {

@@ -1,8 +1,8 @@
-use macroquad::rand::ChooseRandom;
+use macroquad::{input::{KeyCode, is_key_pressed}, rand::ChooseRandom};
 
-use crate::sorts::{
+use crate::{helpers::viewports::get_viewports, sorts::{
     base_sort::{Sort, SortType}, bubble_sort::BubbleSort, insertion_sort::*, selection_sort::*,
-};
+}};
 
 pub const FRAME_RATE: u32 = 60;
 pub const SLOW_SPEED: u32 = FRAME_RATE / 6;
@@ -29,7 +29,8 @@ pub struct WatchSortsState {
     sorts: Vec<Box<dyn Sort>>,
     is_playing: bool,
     play_speed: u32,
-    frame: u32,
+    frame: usize,
+    max_frame: usize,
 }
 
 impl WatchSortsState {
@@ -58,6 +59,13 @@ impl WatchSortsState {
             }
         }
 
+        let max_frame = match sorts.iter().map(|sort| {
+            sort.get_move_count()
+        }).max() {
+            Some(n) => n,
+            None => panic!("Number of sorts should be 1 or greater")
+        };
+
         Self {
             starting_list: list_type,
             list_size,
@@ -65,6 +73,7 @@ impl WatchSortsState {
             is_playing: false,
             play_speed,
             frame: 0,
+            max_frame,
         }
     }
 
@@ -72,9 +81,15 @@ impl WatchSortsState {
         self.is_playing = !self.is_playing;
     }
 
-    pub fn step(&mut self) {
+    pub fn step_forward(&mut self) {
         for i in 0..self.sorts.len() {
             self.sorts[i].advance_sort();
+        }
+    }
+
+    pub fn step_back(&mut self) {
+        for i in 0..self.sorts.len() {
+            self.sorts[i].withdraw_sort();
         }
     }
 
@@ -88,14 +103,46 @@ impl WatchSortsState {
 
     pub fn advance_frame(&mut self) {
         self.frame += 1;
-        if self.frame >= self.play_speed {
-            self.step();
+        if self.frame >= self.play_speed as usize {
+            self.step_forward();
             self.frame = 0;
         }
     }
 
-    pub fn draw(&self) {
+    pub fn control(&mut self) {
+        if is_key_pressed(KeyCode::Space) {
+            self.play_or_pause();
+            return;
+        }
 
+        if is_key_pressed(KeyCode::Right) && !self.is_playing {
+            if self.frame <= self.max_frame {
+                self.step_forward();
+            }
+        }
+        if is_key_pressed(KeyCode::Left) && !self.is_playing {
+            self.step_back();
+        }
+
+        if is_key_pressed(KeyCode::R) {
+            self.is_playing = false;
+            self.reset_sorts();
+        }
+        
+        if self.is_playing {
+            self.advance_frame();
+        }
+    }
+
+    pub fn draw(&self) {
+        let sort_count = self.sorts.len();
+        let viewports = get_viewports(sort_count);
+
+        println!("viewport count: {}", viewports.len());
+
+        for (i, sort) in self.sorts.iter().enumerate() {
+            sort.draw_sort(viewports[i]);
+        }
     }
 }
 

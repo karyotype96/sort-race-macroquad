@@ -1,4 +1,4 @@
-use crate::sorts::base_sort::{Sort, SortMove, SwapData};
+use crate::sorts::base_sort::{ReadData, Sort, SortMove, SwapData};
 
 #[derive(Default)]
 pub struct BubbleSort {
@@ -15,8 +15,14 @@ impl Sort for BubbleSort {
 
         let mut pre_data = data.clone();
         for _ in 0..pre_data.len() {
+            let mut is_ordered = true;
             for j in 0..pre_data.len() - 1 {
+                self.moves.push(SortMove::Read(ReadData {
+                    index: j
+                }));
+
                 if pre_data[j] > pre_data[j+1] {
+                    is_ordered = false;
                     let tmp = pre_data[j];
                     pre_data[j] = pre_data[j+1];
                     pre_data[j+1] = tmp;
@@ -25,6 +31,9 @@ impl Sort for BubbleSort {
                         index2: j+1,
                     }));
                 }
+            }
+            if is_ordered {
+                break;
             }
         }
     }
@@ -83,6 +92,10 @@ impl Sort for BubbleSort {
 
     fn get_data(&self) -> Vec<u32> {
         self.data.clone()
+    }
+
+    fn get_move_count(&self) -> usize {
+        self.moves.len()
     }
 
     fn get_current_move(&self) -> SortMove {

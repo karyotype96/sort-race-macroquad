@@ -90,6 +90,10 @@ impl Sort for InsertionSort {
         self.data.clone()
     }
 
+    fn get_move_count(&self) -> usize {
+        self.moves.len()
+    }
+
     fn get_current_move(&self) -> SortMove {
         if self.is_finished() {
             SortMove::None
