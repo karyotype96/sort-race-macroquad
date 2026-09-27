@@ -1,13 +1,13 @@
 use macroquad::{input::{KeyCode, is_key_pressed}, rand::ChooseRandom};
 
 use crate::{helpers::viewports::get_viewports, sorts::{
-    base_sort::{Sort, SortType}, bubble_sort::BubbleSort, insertion_sort::*, selection_sort::*,
+    base_sort::{Sort, SortType::{self, CocktailShaker}}, bubble_sort::BubbleSort, cocktail_shaker_sort::CocktailShakerSort, insertion_sort::*, selection_sort::*,
 }};
 
-pub const FRAME_RATE: u32 = 60;
-pub const SLOW_SPEED: u32 = FRAME_RATE / 6;
-pub const MEDIUM_SPEED: u32 = FRAME_RATE / 12;
-pub const HIGH_SPEED: u32 = FRAME_RATE / 30;
+pub const FRAME_RATE: f64 = 60.0;
+pub const SLOW_SPEED: f64 = FRAME_RATE / 30.0;
+pub const MEDIUM_SPEED: f64 = FRAME_RATE / 120.0;
+pub const HIGH_SPEED: f64 = FRAME_RATE / 14400.0;
 
 pub enum ProgramState {
     SelectListType,
@@ -28,13 +28,13 @@ pub struct WatchSortsState {
     list_size: u32,
     sorts: Vec<Box<dyn Sort>>,
     is_playing: bool,
-    play_speed: u32,
+    play_speed: f64,
     frame: usize,
     max_frame: usize,
 }
 
 impl WatchSortsState {
-    pub fn new(list_type: ListType, list_size: u32, sort_list: &Vec<SortType>, play_speed: u32) -> Self {
+    pub fn new(list_type: ListType, list_size: u32, sort_list: &Vec<SortType>, play_speed: f64) -> Self {
         let mut sorts: Vec<Box<dyn Sort>> = Vec::new();
 
         let data = randomize_data(list_type, list_size);
@@ -53,6 +53,11 @@ impl WatchSortsState {
                 },
                 SortType::Bubble => {
                     let mut sort = BubbleSort::default();
+                    sort.init_sort(&data);
+                    sorts.push(Box::new(sort));
+                },
+                SortType::CocktailShaker => {
+                    let mut sort = CocktailShakerSort::default();
                     sort.init_sort(&data);
                     sorts.push(Box::new(sort));
                 }
@@ -103,9 +108,19 @@ impl WatchSortsState {
 
     pub fn advance_frame(&mut self) {
         self.frame += 1;
-        if self.frame >= self.play_speed as usize {
-            self.step_forward();
-            self.frame = 0;
+
+        if self.play_speed > 1.0 {
+            if self.frame >= self.play_speed as usize {
+                self.step_forward();
+                self.frame = 0;
+            }
+        } else {
+            let mut count = 0.0;
+
+            while count < 1.0 {
+                self.step_forward();
+                count += self.play_speed;
+            }
         }
     }
 
@@ -137,8 +152,6 @@ impl WatchSortsState {
     pub fn draw(&self) {
         let sort_count = self.sorts.len();
         let viewports = get_viewports(sort_count);
-
-        println!("viewport count: {}", viewports.len());
 
         for (i, sort) in self.sorts.iter().enumerate() {
             sort.draw_sort(viewports[i]);

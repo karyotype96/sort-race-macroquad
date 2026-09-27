@@ -32,6 +32,7 @@ pub enum SortType {
     Selection,
     Insertion,
     Bubble,
+    CocktailShaker,
 }
 
 impl SortType {
@@ -40,6 +41,7 @@ impl SortType {
             SortType::Selection => "Selection Sort",
             SortType::Insertion => "Insertion Sort",
             SortType::Bubble => "Bubble Sort",
+            SortType::CocktailShaker => "CocktailShaker",
         }
     }
 }

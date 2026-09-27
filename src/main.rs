@@ -3,21 +3,14 @@ pub mod state_info;
 pub mod styles;
 pub mod helpers;
 
-use macroquad::input::KeyCode::Insert;
 use macroquad::prelude::*;
 use macroquad::ui::*;
 use macroquad::input::{KeyCode};
-use macroquad::rand::ChooseRandom;
 
-use crate::sorts::base_sort::Sort;
 use crate::sorts::base_sort::SortType;
-use crate::sorts::bubble_sort::BubbleSort;
-use crate::sorts::insertion_sort::InsertionSort;
-use crate::sorts::selection_sort::SelectionSort;
-use crate::state_info::program_state::HIGH_SPEED;
+use crate::state_info::program_state::{SLOW_SPEED, MEDIUM_SPEED, HIGH_SPEED};
 use crate::state_info::program_state::ListType;
 use crate::state_info::program_state::ProgramState;
-use crate::state_info::program_state::SLOW_SPEED;
 use crate::state_info::program_state::WatchSortsState;
 use crate::styles::default_style;
 
@@ -37,11 +30,12 @@ async fn main() {
         SortType::Selection,
         SortType::Insertion,
         SortType::Bubble,
+        SortType::CocktailShaker,
     ];
 
     let mut watch_sorts_state = WatchSortsState::new(
         ListType::FullyRandom,
-        64,
+        256,
         &all_sorts,
         HIGH_SPEED,
     );
