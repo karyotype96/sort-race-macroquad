@@ -18,6 +18,7 @@ pub enum SortType {
     Bubble,
     CocktailShaker,
     OutOfPlaceMerge,
+    InPlaceMerge,
     Comb,
 }
 
@@ -29,6 +30,7 @@ impl SortType {
             SortType::Bubble => "Bubble Sort",
             SortType::CocktailShaker => "Cocktail Shaker Sort",
             SortType::OutOfPlaceMerge => "Out-of-Place Merge Sort",
+            SortType::InPlaceMerge => "In-Place Merge Sort",
             SortType::Comb => "Comb Sort"
         }
     }

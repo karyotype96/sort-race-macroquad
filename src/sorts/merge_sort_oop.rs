@@ -19,49 +19,8 @@ impl Sort for OutOfPlaceMergeSort {
         self.merge(&mut pre_data, 0, len);
     }
 
-    fn advance_sort(&mut self) {
-        if self.sort_info.is_finished() {
-            self.sort_info.move_index += 1;
-            return
-        }
-
-        match self.sort_info.moves[self.sort_info.move_index] {
-            SortMove::Swap { index1, index2 } => {
-                let tmp = self.sort_info.data[index1];
-                self.sort_info.data[index1] = self.sort_info.data[index2];
-                self.sort_info.data[index2] = tmp;
-            }
-            SortMove::Write { index, from: _, to } => {
-                self.sort_info.data[index] = to;
-            }
-            _ => {}
-        }
-
-        self.sort_info.move_index += 1;
-    }
-
-    fn withdraw_sort(&mut self) {
-        if self.sort_info.move_index == 0 {
-            return;
-        }
-
-        self.sort_info.move_index -= 1;
-        if self.sort_info.is_finished() {
-            return;
-        }
-
-        match self.sort_info.moves[self.sort_info.move_index] {
-            SortMove::Swap { index1, index2 } => {
-                let tmp = self.sort_info.data[index1];
-                self.sort_info.data[index1] = self.sort_info.data[index2];
-                self.sort_info.data[index2] = tmp;
-            }
-            SortMove::Write { index, from, .. } => {
-                self.sort_info.data[index] = from;
-            }
-            _ => {}
-        }
-    }
+    fn advance_sort(&mut self) { self.sort_info.advance_sort(); }
+    fn withdraw_sort(&mut self) { self.sort_info.withdraw_sort(); }
 
     fn get_name(&self) -> &'static str { "Out-of-Place Merge Sort" }
     fn get_data(&self) -> Vec<u32> { self.sort_info.data.clone() }

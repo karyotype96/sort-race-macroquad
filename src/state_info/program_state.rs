@@ -1,7 +1,7 @@
 use macroquad::{input::{KeyCode, is_key_pressed}, rand::ChooseRandom};
 
 use crate::{helpers::viewports::get_viewports, sorts::{
-    base_sort::{Sort, SortType::{self}}, bubble_sort::BubbleSort, cocktail_shaker_sort::CocktailShakerSort, comb_sort::CombSort, insertion_sort::*, merge_sort_oop::OutOfPlaceMergeSort, selection_sort::*,
+    base_sort::{Sort, SortType::{self}}, bubble_sort::BubbleSort, cocktail_shaker_sort::CocktailShakerSort, comb_sort::CombSort, insertion_sort::*, merge_sort_ip::InPlaceMergeSort, merge_sort_oop::OutOfPlaceMergeSort, selection_sort::*,
 }};
 
 pub enum ProgramState {
@@ -60,6 +60,11 @@ impl WatchSortsState {
                 },
                 SortType::OutOfPlaceMerge => {
                     let mut sort = OutOfPlaceMergeSort::default();
+                    sort.init_sort(&data);
+                    sorts.push(Box::new(sort));
+                },
+                SortType::InPlaceMerge => {
+                    let mut sort = InPlaceMergeSort::default();
                     sort.init_sort(&data);
                     sorts.push(Box::new(sort));
                 }

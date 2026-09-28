@@ -5,4 +5,5 @@ pub mod cocktail_shaker_sort;
 pub mod selection_sort;
 pub mod insertion_sort;
 pub mod merge_sort_oop;
+pub mod merge_sort_ip;
 pub mod comb_sort;
