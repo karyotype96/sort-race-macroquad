@@ -2,30 +2,12 @@ use macroquad::{camera::{Camera2D, set_camera, set_default_camera}, color::{WHIT
 
 use crate::helpers::map_range::map_range;
 
-#[derive(Clone, Copy, Debug)]
-pub struct ReadData {
-    pub index: usize,
-}
-
-#[derive(Clone, Copy, Debug)]
-pub struct SwapData {
-    pub index1: usize,
-    pub index2: usize,
-}
-
-#[derive(Clone, Copy, Debug)]
-pub struct WriteData {
-    pub index: usize,
-    pub from: u32,
-    pub to: u32,
-}
-
 #[derive(Copy, Clone, Debug)]
 pub enum SortMove {
     None,
-    Read(ReadData),
-    Swap(SwapData),
-    Write(WriteData),
+    Read { index: usize },
+    Swap { index1: usize, index2: usize },
+    Write { index: usize, from: u32, to: u32 },
 }
 
 pub enum SortType {
@@ -95,18 +77,18 @@ pub trait Sort {
 
             match self.get_current_move() {
                 SortMove::None => {}
-                SortMove::Read(data) => {
-                    if i == data.index {
+                SortMove::Read { index } => {
+                    if i == index {
                         rectangle_color = WHITE;
                     }
                 }
-                SortMove::Swap(data) => {
-                    if i == data.index1 || i == data.index2 {
+                SortMove::Swap { index1, index2 } => {
+                    if i == index1 || i == index2 {
                         rectangle_color = WHITE;
                     }
                 }
-                SortMove::Write(data) => {
-                    if i == data.index {
+                SortMove::Write { index, .. } => {
+                    if i == index {
                         rectangle_color = WHITE;
                     }
                 }
@@ -125,7 +107,7 @@ pub trait Sort {
 
             draw_rectangle_lines(0.0, 0.0, screen_width(), screen_height(), 5.0, WHITE);
             draw_text(format!("{}", self.get_name()), 25.0, 50.0, 48.0, WHITE);
-            if (self.is_finished()){
+            if self.is_finished(){
                 draw_text("Finished!", 25.0, 100.0, 48.0, YELLOW);
             }
         }

@@ -1,4 +1,4 @@
-use crate::sorts::base_sort::{ReadData, Sort, SortMove, SwapData};
+use crate::sorts::base_sort::{Sort, SortMove};
 
 // Selection Sort
 #[derive(Default)]
@@ -20,7 +20,7 @@ impl Sort for SelectionSort {
             let mut min_index = i;
 
             for j in i..pre_data.len() {
-                self.moves.push(SortMove::Read(ReadData { index: j }));
+                self.moves.push(SortMove::Read { index: j });
                 if pre_data[j] < pre_data[min_index] {
                     min_index = j;
                 }
@@ -32,7 +32,7 @@ impl Sort for SelectionSort {
                 pre_data[min_index] = tmp;
 
                 // self.moves.push(SortMove::Swap(i, min_index));
-                self.moves.push(SortMove::Swap(SwapData { index1: i, index2: min_index }));
+                self.moves.push(SortMove::Swap { index1: i, index2: min_index });
             }
         }
     }
@@ -44,15 +44,13 @@ impl Sort for SelectionSort {
         }
 
         match self.moves[self.move_index] {
-            SortMove::Swap(mv) => {
-                self.selected = None;
-                let tmp = self.data[mv.index1];
-                self.data[mv.index1] = self.data[mv.index2];
-                self.data[mv.index2] = tmp;
+            SortMove::Swap { index1, index2 } => {
+                let tmp = self.data[index1];
+                self.data[index1] = self.data[index2];
+                self.data[index2] = tmp;
             }
-            SortMove::Write(mv) => {
-                self.selected = None;
-                self.data[mv.index] = mv.to;
+            SortMove::Write { index, from: _, to } => {
+                self.data[index] = to;
             }
             _ => {}
         }
@@ -71,15 +69,13 @@ impl Sort for SelectionSort {
         }
 
         match self.moves[self.move_index] {
-            SortMove::Swap(mv) => {
-                self.selected = None;
-                let tmp = self.data[mv.index1];
-                self.data[mv.index1] = self.data[mv.index2];
-                self.data[mv.index2] = tmp;
+            SortMove::Swap { index1, index2 } => {
+                let tmp = self.data[index1];
+                self.data[index1] = self.data[index2];
+                self.data[index2] = tmp;
             }
-            SortMove::Write(mv) => {
-                self.selected = None;
-                self.data[mv.index] = mv.from;
+            SortMove::Write { index, from, .. } => {
+                self.data[index] = from;
             }
             _ => {}
         }
@@ -90,7 +86,7 @@ impl Sort for SelectionSort {
     }
 
     fn get_name(&self) -> &'static str {
-        "Selection Sort"
+        "Cocktail Shaker Sort"
     }
 
     fn get_data(&self) -> Vec<u32> {

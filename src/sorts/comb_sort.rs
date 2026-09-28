@@ -1,4 +1,4 @@
-use crate::sorts::base_sort::{ReadData, Sort, SortMove, SwapData};
+use crate::sorts::base_sort::{Sort, SortMove};
 
 #[derive(Default)]
 pub struct CombSort {
@@ -20,22 +20,22 @@ impl Sort for CombSort {
         while !is_sorted || gap_length > 1 {
             is_sorted = true;
             for i in 0..(pre_data.len()-gap_length){
-                self.moves.push(SortMove::Read(ReadData {
+                self.moves.push(SortMove::Read {
                     index: i,
-                }));
-                self.moves.push(SortMove::Read(ReadData {
+                });
+                self.moves.push(SortMove::Read {
                     index: i+gap_length,
-                }));
+                });
 
                 if pre_data[i] > pre_data[i + gap_length] {
                     is_sorted = false;
                     let tmp = pre_data[i];
                     pre_data[i] = pre_data[i + gap_length];
                     pre_data[i + gap_length] = tmp;
-                    self.moves.push(SortMove::Swap(SwapData {
+                    self.moves.push(SortMove::Swap {
                         index1: i,
                         index2: i + gap_length
-                    }))
+                    })
                 }
             }
 
@@ -53,13 +53,13 @@ impl Sort for CombSort {
         }
 
         match self.moves[self.move_index] {
-            SortMove::Swap(mv) => {
-                let tmp = self.data[mv.index1];
-                self.data[mv.index1] = self.data[mv.index2];
-                self.data[mv.index2] = tmp;
+            SortMove::Swap { index1, index2 } => {
+                let tmp = self.data[index1];
+                self.data[index1] = self.data[index2];
+                self.data[index2] = tmp;
             }
-            SortMove::Write(mv) => {
-                self.data[mv.index] = mv.to;
+            SortMove::Write { index, from: _, to } => {
+                self.data[index] = to;
             }
             _ => {}
         }
@@ -78,13 +78,13 @@ impl Sort for CombSort {
         }
 
         match self.moves[self.move_index] {
-            SortMove::Swap(mv) => {
-                let tmp = self.data[mv.index1];
-                self.data[mv.index1] = self.data[mv.index2];
-                self.data[mv.index2] = tmp;
+            SortMove::Swap { index1, index2 } => {
+                let tmp = self.data[index1];
+                self.data[index1] = self.data[index2];
+                self.data[index2] = tmp;
             }
-            SortMove::Write(mv) => {
-                self.data[mv.index] = mv.from;
+            SortMove::Write { index, from, .. } => {
+                self.data[index] = from;
             }
             _ => {}
         }

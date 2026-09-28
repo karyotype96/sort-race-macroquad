@@ -8,11 +8,19 @@ use macroquad::ui::*;
 use macroquad::input::{KeyCode};
 
 use crate::sorts::base_sort::SortType;
-use crate::state_info::program_state::{SLOW_SPEED, MEDIUM_SPEED, HIGH_SPEED};
 use crate::state_info::program_state::ListType;
 use crate::state_info::program_state::ProgramState;
 use crate::state_info::program_state::WatchSortsState;
 use crate::styles::default_style;
+
+pub struct SelectSortsState {
+    list_type: usize,
+    sorts: Vec<bool>,
+    ops_per_second: f32,
+    // the actual size of the list will be 2 raised to
+    // the power of this value floored
+    list_size_exponent: f32,
+}
 
 fn window_conf() -> Conf {
     Conf {
@@ -24,7 +32,7 @@ fn window_conf() -> Conf {
 
 #[macroquad::main(window_conf)]
 async fn main() {
-    let mut currentState = ProgramState::SelectListType;
+    let mut current_state = ProgramState::SelectSorts;
 
     let all_sorts: Vec<SortType> = vec![
         SortType::Selection,
@@ -33,13 +41,31 @@ async fn main() {
         SortType::CocktailShaker,
         SortType::Comb,
     ];
+    
+    let mut select_sorts_state = SelectSortsState {
+        list_type: 0,
+        sorts: all_sorts.iter().map(|_| false).collect(),
+        ops_per_second: 1.0,
+        list_size_exponent: 4.0,
+    };
+
+    let list_type_options = &["Fully Random", "Slightly Random", "Reversed"];
+
+    /* let sorts_selected = vec![
+        SortType::Selection,
+        SortType::Insertion,
+        SortType::Bubble,
+        SortType::CocktailShaker
+    ];
 
     let mut watch_sorts_state = WatchSortsState::new(
-        ListType::FullyRandom,
+        ListType::SlightlyRandom,
         256,
-        &all_sorts,
+        &sorts_selected,
         HIGH_SPEED,
-    );
+    ); */
+
+    let mut watch_sorts_state = WatchSortsState::default();
 
     let ui_skin = default_style::default_style();
     root_ui().push_skin(&ui_skin);
@@ -49,68 +75,76 @@ async fn main() {
             break;
         }
 
+        /*
         watch_sorts_state.control();
         watch_sorts_state.draw();
+        */
+        let ops = select_sorts_state.ops_per_second;
+        let actual_speed = 60.0 / ops;
 
-        /* match currentState {
-            ProgramState::SelectListType => {
-                clear_background(BLACK);
-                
-                widgets::Window::new(hash!(),
-                    vec2(screen_width() / 2.0 - 200.0, screen_height() / 2.0 - 50.0),
-                    vec2(400.0, 100.0),
-                )
-                .titlebar(true)
-                .label("Select starting list type")
-                .ui(&mut root_ui(), |ui| {
-                    ui.label(None, "Select starting list type:");
+        match current_state {
+            ProgramState::SelectSorts => {
+                root_ui().window(hash!("starting list window"), 
+                    vec2(50.0, 50.0),
+                    vec2(screen_width() / 2.0 - 100.0, 200.0),
+                    |ui| {
+                        ui.combo_box(
+                            hash!("starting list type"), 
+                            "Starting List Type",
+                            list_type_options,
+                            &mut select_sorts_state.list_type
+                        );
+                    }
+                );
 
-                    if ui.button(None, "FULLY RANDOM") {
-                        currentState = ProgramState::SelectSorts(ListType::FullyRandom);
+                root_ui().window(hash!("selected sorts window"),
+                    vec2(50.0, screen_height() / 4.0),
+                    vec2(screen_width() / 2.0 - 100.0, screen_height() / 4.0),
+                    |ui| {
+                        ui.label(None, "Select sorts to show:");
                         for i in 0..all_sorts.len() {
-                            selected_sorts[i] = false;
+                            let name = all_sorts[i].get_name();
+                            ui.checkbox(hash!(name), 
+                                name,
+                                &mut select_sorts_state.sorts[i]
+                            );
                         }
                     }
+                );
 
-                    ui.same_line(0.0);
-                    if ui.button(None, "SLIGHTLY RANDOM") {
-                        currentState = ProgramState::SelectSorts(ListType::SlightlyRandom);
-                        for i in 0..all_sorts.len() {
-                            selected_sorts[i] = false;
-                        }
+                root_ui().window(hash!("speed slider window"),
+                    vec2(50.0, screen_height() / 2.0),
+                    vec2(screen_width() / 2.0 - 100.0, screen_height() / 4.0),
+                    |ui| {
+                        ui.label(None, "Playback Speed");
+                        ui.slider(hash!("speed slider"),
+                            "",
+                            std::ops::Range { start: 1.0, end: 1000.0 },
+                            &mut select_sorts_state.ops_per_second,
+                        );
+                        ui.label(None, &format!("{} operations per second", ops.floor()))
                     }
+                );
 
-                    ui.same_line(0.0);
-                    if ui.button(None, "REVERSED") {
-                        currentState = ProgramState::SelectSorts(ListType::Reversed);
-                        for i in 0..all_sorts.len() {
-                            selected_sorts[i] = false;
-                        }
+                root_ui().window(hash!("list size window"),
+                    vec2(screen_width() / 2.0 + 50.0, 50.0),
+                    vec2(screen_width() / 2.0 - 100.0, screen_height() / 4.0),
+                    |ui| {
+                        ui.label(None, "List Size");
+                        ui.slider(hash!("list size slider"),
+                            "",
+                            std::ops::Range { start: 4.0, end: 10.0 },
+                            &mut select_sorts_state.list_size_exponent
+                        );
+                        ui.label(None, &format!("List size: {} items", 2_i32.pow(select_sorts_state.list_size_exponent.floor() as u32)))
                     }
-                });
-                
-            }
-            ProgramState::SelectSorts(list_type) => {
-
+                );
             }
             ProgramState::WatchSorts => {
                 
             }
-        } */
+        }
 
         next_frame().await
     }
-}
-
-// state views
-fn select_list_type_view(currentState: &mut ProgramState) {
-
-}
-
-fn select_sorts_view(currentState: &mut ProgramState) {
-
-}
-
-fn watch_sorts(currentState: &mut ProgramState) {
-
 }

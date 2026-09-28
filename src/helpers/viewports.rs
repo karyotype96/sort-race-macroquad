@@ -3,7 +3,6 @@ use macroquad::{math::Rect, window::{screen_width, screen_height}};
 pub fn get_viewports(count: usize) -> Vec<Rect> {
     let w = screen_width();
     let h = screen_height();
-    let aspect_ratio = w / h;
 
     match count {
         1 => {
@@ -49,6 +48,42 @@ pub fn get_viewports(count: usize) -> Vec<Rect> {
                 Rect::new(0.0, h / 6.0, w / 3.0, h / 3.0),
                 Rect::new(w / 3.0, h / 6.0, w / 3.0, h / 3.0),
                 Rect::new(2.0 * w / 3.0, h / 6.0, w / 3.0, h / 3.0),
+            ]
+        }
+        7 => {
+            vec![
+                Rect::new(0.0, 2.0 * h / 3.0, w / 3.0, h / 3.0),
+                Rect::new(w / 3.0, 2.0 * h / 3.0, w / 3.0, h / 3.0),
+                Rect::new(2.0 * w / 3.0, 2.0 * h / 3.0, w / 3.0, h / 3.0),
+                Rect::new(w / 6.0, h / 3.0, w / 3.0, h / 3.0),
+                Rect::new(w / 2.0, h / 3.0, w / 3.0, h / 3.0),
+                Rect::new(w / 6.0, 0.0, w / 3.0, h / 3.0),
+                Rect::new(w / 2.0, 0.0, w / 3.0, h / 3.0),
+            ]
+        }
+        8 => {
+            vec![
+                Rect::new(0.0, 2.0 * h / 3.0, w / 3.0, h / 3.0),
+                Rect::new(w / 3.0, 2.0 * h / 3.0, w / 3.0, h / 3.0),
+                Rect::new(2.0 * w / 3.0, 2.0 * h / 3.0, w / 3.0, h / 3.0),
+                Rect::new(0.0, h / 3.0, w / 3.0, h / 3.0),
+                Rect::new(w / 3.0, h / 3.0, w / 3.0, h / 3.0),
+                Rect::new(2.0 * w / 3.0, h / 3.0, w / 3.0, h / 3.0),
+                Rect::new(w / 6.0, 0.0, w / 3.0, h / 3.0),
+                Rect::new(w / 2.0, 0.0, w / 3.0, h / 3.0),
+            ]
+        }
+        9 => {
+            vec![
+                Rect::new(0.0, 2.0 * h / 3.0, w / 3.0, h / 3.0),
+                Rect::new(w / 3.0, 2.0 * h / 3.0, w / 3.0, h / 3.0),
+                Rect::new(2.0 * w / 3.0, 2.0 * h / 3.0, w / 3.0, h / 3.0),
+                Rect::new(0.0, h / 3.0, w / 3.0, h / 3.0),
+                Rect::new(w / 3.0, h / 3.0, w / 3.0, h / 3.0),
+                Rect::new(2.0 * w / 3.0, h / 3.0, w / 3.0, h / 3.0),
+                Rect::new(0.0, 0.0, w / 3.0, h / 3.0),
+                Rect::new(w / 3.0, 0.0, w / 3.0, h / 3.0),
+                Rect::new(2.0 * w / 3.0, 0.0, w / 3.0, h / 3.0),
             ]
         }
         _ => {

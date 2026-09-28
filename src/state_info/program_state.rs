@@ -1,7 +1,7 @@
 use macroquad::{input::{KeyCode, is_key_pressed}, rand::ChooseRandom};
 
 use crate::{helpers::viewports::get_viewports, sorts::{
-    base_sort::{Sort, SortType::{self, CocktailShaker}}, bubble_sort::BubbleSort, cocktail_shaker_sort::CocktailShakerSort, comb_sort::CombSort, insertion_sort::*, selection_sort::*,
+    base_sort::{Sort, SortType::{self}}, bubble_sort::BubbleSort, cocktail_shaker_sort::CocktailShakerSort, comb_sort::CombSort, insertion_sort::*, selection_sort::*,
 }};
 
 pub const FRAME_RATE: f64 = 60.0;
@@ -10,19 +10,20 @@ pub const MEDIUM_SPEED: f64 = FRAME_RATE / 120.0;
 pub const HIGH_SPEED: f64 = FRAME_RATE / 14400.0;
 
 pub enum ProgramState {
-    SelectListType,
-    SelectSorts(ListType),
+    SelectSorts,
     WatchSorts,
 }
 
 // Info for how each list starts
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, Default)]
 pub enum ListType {
+    #[default]
     FullyRandom,
     SlightlyRandom,
     Reversed
 }
 
+#[derive(Default)]
 pub struct WatchSortsState {
     starting_list: ListType,
     list_size: u32,

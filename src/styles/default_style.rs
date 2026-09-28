@@ -6,7 +6,7 @@ pub fn default_style() -> Skin {
         .style_builder()
         .color(BLACK)
         .text_color(WHITE)
-        .margin(RectOffset::new(10.0, 10.0, 10.0, 10.0))
+        // .margin(RectOffset::new(10.0, 10.0, 10.0, 10.0))
         .font_size(20)
         .build();
 
