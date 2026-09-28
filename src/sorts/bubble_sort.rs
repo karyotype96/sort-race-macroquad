@@ -90,6 +90,10 @@ impl Sort for BubbleSort {
         "Bubble Sort"
     }
 
+    fn get_move_index(&self) -> usize {
+        self.move_index
+    }
+
     fn get_data(&self) -> Vec<u32> {
         self.data.clone()
     }

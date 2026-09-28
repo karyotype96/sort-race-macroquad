@@ -114,6 +114,10 @@ impl Sort for CocktailShakerSort {
         self.data.clone()
     }
 
+    fn get_move_index(&self) -> usize {
+        self.move_index
+    }
+
     fn get_move_count(&self) -> usize {
         self.moves.len()
     }

@@ -26,6 +26,7 @@ pub struct WatchSortsState {
     is_playing: bool,
     play_speed: f64,
     frame: usize,
+    sort_frame: usize,
     max_frame: usize,
 }
 
@@ -84,6 +85,7 @@ impl WatchSortsState {
             is_playing: false,
             play_speed,
             frame: 0,
+            sort_frame: 0,
             max_frame,
         }
     }
@@ -93,14 +95,20 @@ impl WatchSortsState {
     }
 
     pub fn step_forward(&mut self) {
-        for i in 0..self.sorts.len() {
-            self.sorts[i].advance_sort();
+        if self.sort_frame < self.max_frame {
+            for i in 0..self.sorts.len() {
+                self.sorts[i].advance_sort();
+            }
+            self.sort_frame += 1;
         }
     }
 
     pub fn step_back(&mut self) {
         for i in 0..self.sorts.len() {
             self.sorts[i].withdraw_sort();
+        }
+        if self.sort_frame > 0 {
+            self.sort_frame -= 1;
         }
     }
 
@@ -110,6 +118,18 @@ impl WatchSortsState {
         for i in 0..self.sorts.len() {
             self.sorts[i].init_sort(&data);
         }
+
+        self.sort_frame = 0;
+        self.frame = 0;
+
+        let max_frame = match self.sorts.iter().map(|sort| {
+            sort.get_move_count()
+        }).max() {
+            Some(n) => n,
+            None => panic!("Number of sorts should be 1 or greater")
+        };
+
+        self.max_frame = max_frame;
     }
 
     pub fn advance_frame(&mut self) {
@@ -123,7 +143,7 @@ impl WatchSortsState {
         } else {
             let mut count = 0.0;
 
-            while count < 1.0 {
+            while count < 1.0 && self.sort_frame < self.max_frame {
                 self.step_forward();
                 count += self.play_speed;
             }

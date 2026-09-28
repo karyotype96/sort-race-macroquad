@@ -51,6 +51,7 @@ pub trait Sort {
     fn get_name(&self) -> &'static str;
 
     fn get_data(&self) -> Vec<u32>;
+    fn get_move_index(&self) -> usize;
     fn get_move_count(&self) -> usize;
     fn get_current_move(&self) -> SortMove;
 
