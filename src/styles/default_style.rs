@@ -15,7 +15,7 @@ pub fn default_style() -> Skin {
         .margin(RectOffset::new(10.0, 10.0, 5.0, 5.0))
         .color(Color { r: 0.5, g: 1.0, b: 1.0, a: 1.0 })
         .color_hovered(Color { r: 0.5, g: 1.0, b: 1.0, a: 0.5 })
-        .font_size(20)
+        .font_size(40)
         .build();
 
     let label_style = root_ui()

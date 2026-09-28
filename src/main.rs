@@ -119,7 +119,7 @@ async fn main() {
                         ui.label(None, "Playback Speed");
                         ui.slider(hash!("speed slider"),
                             "",
-                            std::ops::Range { start: 1.0, end: 1000.0 },
+                            std::ops::Range { start: 1.0, end: 10000.0 },
                             &mut select_sorts_state.ops_per_second,
                         );
                         ui.label(None, &format!("{} operations per second", ops.floor()))
@@ -127,7 +127,7 @@ async fn main() {
                 );
 
                 root_ui().window(hash!("list size window"),
-                    vec2(screen_width() / 2.0 + 50.0, screen_height() / 4.0),
+                    vec2(screen_width() / 2.0 + 50.0, screen_height() / 4.0 + 60.0),
                     vec2(screen_width() / 2.0 - 100.0, screen_height() / 4.0),
                     |ui| {
                         ui.label(None, "List Size");

@@ -86,7 +86,7 @@ impl Sort for SelectionSort {
     }
 
     fn get_name(&self) -> &'static str {
-        "Cocktail Shaker Sort"
+        "Selection Sort"
     }
 
     fn get_data(&self) -> Vec<u32> {
