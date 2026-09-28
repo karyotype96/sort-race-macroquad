@@ -42,6 +42,7 @@ async fn main() {
         SortType::CocktailShaker,
         SortType::OutOfPlaceMerge,
         SortType::InPlaceMerge,
+        SortType::QuickRP,
         SortType::Comb,
     ];
     
@@ -127,7 +128,7 @@ async fn main() {
 
 
                 root_ui().window(hash!("ready button"),
-                    vec2(screen_width() / 2.0 - 300.0, 3.0 * screen_height() / 4.0),
+                    vec2(screen_width() / 2.0 - 150.0, 3.0 * screen_height() / 4.0),
                     vec2(300.0, 200.0),
                     |ui| {
                         let selected_count = select_sorts_state.sorts

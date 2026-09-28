@@ -19,6 +19,7 @@ pub enum SortType {
     CocktailShaker,
     OutOfPlaceMerge,
     InPlaceMerge,
+    QuickRP,
     Comb,
 }
 
@@ -31,6 +32,7 @@ impl SortType {
             SortType::CocktailShaker => "Cocktail Shaker Sort",
             SortType::OutOfPlaceMerge => "Out-of-Place Merge Sort",
             SortType::InPlaceMerge => "In-Place Merge Sort",
+            SortType::QuickRP => "Quick Sort - Right Pivot",
             SortType::Comb => "Comb Sort"
         }
     }
