@@ -24,10 +24,20 @@ pub fn default_style() -> Skin {
         .text_color(WHITE)
         .build();
 
+
+    let checkbox_style = root_ui()
+        .style_builder()
+        .color_selected(GREEN)
+        .color_hovered(GRAY)
+        .color_selected_hovered(DARKGREEN)
+        .color_clicked(DARKGRAY)
+        .build();
+
     Skin {
         window_style,
         button_style,
         label_style,
+        checkbox_style,
         ..root_ui().default_skin()
     }
 }

@@ -3,7 +3,6 @@ use crate::sorts::base_sort::{Sort, SortMove};
 #[derive(Default)]
 pub struct InsertionSort {
     data: Vec<u32>,
-    selected: Option<usize>,
     moves: Vec<SortMove>,
     move_index: usize,
 }

@@ -35,7 +35,7 @@ pub struct WatchSortsState {
 }
 
 impl WatchSortsState {
-    pub fn new(list_type: ListType, list_size: u32, sort_list: &Vec<SortType>, play_speed: f64) -> Self {
+    pub fn new(list_type: ListType, list_size: u32, sort_list: &Vec<&SortType>, play_speed: f64) -> Self {
         let mut sorts: Vec<Box<dyn Sort>> = Vec::new();
 
         let data = randomize_data(list_type, list_size);

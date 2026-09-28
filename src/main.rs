@@ -113,7 +113,7 @@ async fn main() {
                 );
 
                 root_ui().window(hash!("speed slider window"),
-                    vec2(50.0, screen_height() / 2.0),
+                    vec2(screen_width() / 2.0 + 50.0, 50.0),
                     vec2(screen_width() / 2.0 - 100.0, screen_height() / 4.0),
                     |ui| {
                         ui.label(None, "Playback Speed");
@@ -127,7 +127,7 @@ async fn main() {
                 );
 
                 root_ui().window(hash!("list size window"),
-                    vec2(screen_width() / 2.0 + 50.0, 50.0),
+                    vec2(screen_width() / 2.0 + 50.0, screen_height() / 4.0),
                     vec2(screen_width() / 2.0 - 100.0, screen_height() / 4.0),
                     |ui| {
                         ui.label(None, "List Size");
@@ -139,9 +139,66 @@ async fn main() {
                         ui.label(None, &format!("List size: {} items", 2_i32.pow(select_sorts_state.list_size_exponent.floor() as u32)))
                     }
                 );
+
+
+                root_ui().window(hash!("ready button"),
+                    vec2(screen_width() / 2.0 - 300.0, 3.0 * screen_height() / 4.0),
+                    vec2(300.0, 200.0),
+                    |ui| {
+                        let selected_count = select_sorts_state.sorts
+                            .iter()
+                            .filter(|&sort| *sort)
+                            .collect::<Vec<&bool>>().len();
+
+                        if selected_count < 1 {
+                            draw_text("Please select at least one sort.", 
+                                screen_width() / 2.0 - 300.0, 
+                                3.0 * screen_height() / 4.0, 
+                                40.0, 
+                                BLUE
+                            );
+                        } else if selected_count > 9 {
+                            draw_text("Please select 9 sorts or less.", 
+                                screen_width() / 2.0 - 300.0, 
+                                3.0 * screen_height() / 4.0, 
+                                40.0, 
+                                BLUE
+                            );
+                        } else {
+                            if ui.button(None, "Start sorting!") {
+                                let mut selected_sorts = Vec::new();
+                                for (i, s) in all_sorts.iter().enumerate() {
+                                    if select_sorts_state.sorts[i] {
+                                        selected_sorts.push(s);
+                                    }
+                                }
+
+                                let list_type = match select_sorts_state.list_type {
+                                    0 => ListType::FullyRandom,
+                                    1 => ListType::SlightlyRandom,
+                                    _ => ListType::Reversed,
+                                };
+
+                                watch_sorts_state = WatchSortsState::new(
+                                    list_type,
+                                    2_u32.pow(select_sorts_state.list_size_exponent.floor() as u32),
+                                    &selected_sorts,
+                                    actual_speed as f64
+                                );
+
+                                current_state = ProgramState::WatchSorts;
+                            }
+                        }
+                    }
+                );
             }
             ProgramState::WatchSorts => {
-                
+                watch_sorts_state.control();
+                watch_sorts_state.draw();
+
+                if is_key_pressed(KeyCode::Q) {
+                    current_state = ProgramState::SelectSorts;
+                }
             }
         }
 
