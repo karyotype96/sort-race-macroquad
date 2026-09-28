@@ -1,10 +1,8 @@
 use crate::sorts::base_sort::{Sort, SortMove};
 
-// Selection Sort
 #[derive(Default)]
 pub struct SelectionSort {
     pub data: Vec<u32>,
-    pub selected: Option<usize>,
     pub moves: Vec<SortMove>,
     pub move_index: usize,
 }

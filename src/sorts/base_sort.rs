@@ -2,6 +2,8 @@ use macroquad::{camera::{Camera2D, set_camera, set_default_camera}, color::{WHIT
 
 use crate::helpers::map_range::map_range;
 
+pub const FRAME_RATE: f32 = 60.0;
+
 #[derive(Copy, Clone, Debug)]
 pub enum SortMove {
     None,
@@ -15,6 +17,7 @@ pub enum SortType {
     Insertion,
     Bubble,
     CocktailShaker,
+    OutOfPlaceMerge,
     Comb,
 }
 
@@ -25,6 +28,7 @@ impl SortType {
             SortType::Insertion => "Insertion Sort",
             SortType::Bubble => "Bubble Sort",
             SortType::CocktailShaker => "Cocktail Shaker Sort",
+            SortType::OutOfPlaceMerge => "Out-of-Place Merge Sort",
             SortType::Comb => "Comb Sort"
         }
     }

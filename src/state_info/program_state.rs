@@ -1,13 +1,8 @@
 use macroquad::{input::{KeyCode, is_key_pressed}, rand::ChooseRandom};
 
 use crate::{helpers::viewports::get_viewports, sorts::{
-    base_sort::{Sort, SortType::{self}}, bubble_sort::BubbleSort, cocktail_shaker_sort::CocktailShakerSort, comb_sort::CombSort, insertion_sort::*, selection_sort::*,
+    base_sort::{Sort, SortType::{self}}, bubble_sort::BubbleSort, cocktail_shaker_sort::CocktailShakerSort, comb_sort::CombSort, insertion_sort::*, merge_sort_oop::OutOfPlaceMergeSort, selection_sort::*,
 }};
-
-pub const FRAME_RATE: f64 = 60.0;
-pub const SLOW_SPEED: f64 = FRAME_RATE / 30.0;
-pub const MEDIUM_SPEED: f64 = FRAME_RATE / 120.0;
-pub const HIGH_SPEED: f64 = FRAME_RATE / 14400.0;
 
 pub enum ProgramState {
     SelectSorts,
@@ -62,6 +57,11 @@ impl WatchSortsState {
                     sort.init_sort(&data);
                     sorts.push(Box::new(sort));
                 },
+                SortType::OutOfPlaceMerge => {
+                    let mut sort = OutOfPlaceMergeSort::default();
+                    sort.init_sort(&data);
+                    sorts.push(Box::new(sort));
+                }
                 SortType::Comb => {
                     let mut sort = CombSort::default();
                     sort.init_sort(&data);

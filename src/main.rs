@@ -7,6 +7,7 @@ use macroquad::prelude::*;
 use macroquad::ui::*;
 use macroquad::input::{KeyCode};
 
+use crate::sorts::base_sort::FRAME_RATE;
 use crate::sorts::base_sort::SortType;
 use crate::state_info::program_state::ListType;
 use crate::state_info::program_state::ProgramState;
@@ -39,6 +40,7 @@ async fn main() {
         SortType::Insertion,
         SortType::Bubble,
         SortType::CocktailShaker,
+        SortType::OutOfPlaceMerge,
         SortType::Comb,
     ];
     
@@ -51,20 +53,6 @@ async fn main() {
 
     let list_type_options = &["Fully Random", "Slightly Random", "Reversed"];
 
-    /* let sorts_selected = vec![
-        SortType::Selection,
-        SortType::Insertion,
-        SortType::Bubble,
-        SortType::CocktailShaker
-    ];
-
-    let mut watch_sorts_state = WatchSortsState::new(
-        ListType::SlightlyRandom,
-        256,
-        &sorts_selected,
-        HIGH_SPEED,
-    ); */
-
     let mut watch_sorts_state = WatchSortsState::default();
 
     let ui_skin = default_style::default_style();
@@ -75,12 +63,8 @@ async fn main() {
             break;
         }
 
-        /*
-        watch_sorts_state.control();
-        watch_sorts_state.draw();
-        */
         let ops = select_sorts_state.ops_per_second;
-        let actual_speed = 60.0 / ops;
+        let actual_speed = FRAME_RATE / ops;
 
         match current_state {
             ProgramState::SelectSorts => {
