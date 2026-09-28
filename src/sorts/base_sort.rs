@@ -34,21 +34,74 @@ impl SortType {
     }
 }
 
+#[derive(Default)]
+pub struct SortBase {
+    pub data: Vec<u32>,
+    pub moves: Vec<SortMove>,
+    pub move_index: usize,
+}
+
+impl SortBase {
+    // during playback, this will execute the next SortMove
+    pub fn advance_sort(&mut self) {
+        if self.is_finished() {
+            self.move_index += 1;
+            return
+        }
+
+        match self.moves[self.move_index] {
+            SortMove::Swap { index1, index2 } => {
+                let tmp = self.data[index1];
+                self.data[index1] = self.data[index2];
+                self.data[index2] = tmp;
+            }
+            SortMove::Write { index, from: _, to } => {
+                self.data[index] = to;
+            }
+            _ => {}
+        }
+
+        self.move_index += 1;
+    }
+
+    // move the sort back 1 tick
+    pub fn withdraw_sort(&mut self) {
+        if self.move_index == 0 {
+            return;
+        }
+
+        self.move_index -= 1;
+        if self.is_finished() {
+            return;
+        }
+
+        match self.moves[self.move_index] {
+            SortMove::Swap { index1, index2 } => {
+                let tmp = self.data[index1];
+                self.data[index1] = self.data[index2];
+                self.data[index2] = tmp;
+            }
+            SortMove::Write { index, from, .. } => {
+                self.data[index] = from;
+            }
+            _ => {}
+        }
+    }
+
+    pub fn is_finished(&self) -> bool {
+        self.move_index >= self.moves.len()
+    }
+}
+
 pub trait Sort {
     // this will add the list of SortMoves for the sort struct
     fn init_sort(&mut self, data: &Vec<u32>);
 
-    // during playback, this will execute the next SortMove
-    fn advance_sort(&mut self);
-
-    // move the sort back 1 tick
-    fn withdraw_sort(&mut self);
-
-    // returns true if the sort is finished
-    fn is_finished(&self) -> bool;
-
     // should be different for each sort
     fn get_name(&self) -> &'static str;
+
+    fn advance_sort(&mut self);
+    fn withdraw_sort(&mut self);
 
     fn get_data(&self) -> Vec<u32>;
     fn get_move_index(&self) -> usize;
@@ -112,7 +165,7 @@ pub trait Sort {
 
             draw_rectangle_lines(0.0, 0.0, screen_width(), screen_height(), 5.0, WHITE);
             draw_text(format!("{}", self.get_name()), 25.0, 50.0, 48.0, WHITE);
-            if self.is_finished(){
+            if self.get_move_index() >= self.get_move_count(){
                 draw_text("Finished!", 25.0, 100.0, 48.0, YELLOW);
             }
         }

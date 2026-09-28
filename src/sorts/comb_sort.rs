@@ -1,17 +1,17 @@
-use crate::sorts::base_sort::{Sort, SortMove};
+use crate::sorts::base_sort::{Sort, SortBase, SortMove};
 
 #[derive(Default)]
 pub struct CombSort {
-    data: Vec<u32>,
-    moves: Vec<SortMove>,
-    move_index: usize,
+    sort_info: SortBase,
 }
 
 impl Sort for CombSort {
     fn init_sort(&mut self, data: &Vec<u32>) {
-        self.data = data.clone();
-        self.moves.clear();
-        self.move_index = 0;
+        self.sort_info = SortBase {
+            data: data.clone(),
+            moves: Vec::new(),
+            move_index: 0,
+        };
 
         let mut pre_data = data.clone();
         let mut gap_length = pre_data.len() / 2;
@@ -20,10 +20,10 @@ impl Sort for CombSort {
         while !is_sorted || gap_length > 1 {
             is_sorted = true;
             for i in 0..(pre_data.len()-gap_length){
-                self.moves.push(SortMove::Read {
+                self.sort_info.moves.push(SortMove::Read {
                     index: i,
                 });
-                self.moves.push(SortMove::Read {
+                self.sort_info.moves.push(SortMove::Read {
                     index: i+gap_length,
                 });
 
@@ -32,7 +32,7 @@ impl Sort for CombSort {
                     let tmp = pre_data[i];
                     pre_data[i] = pre_data[i + gap_length];
                     pre_data[i + gap_length] = tmp;
-                    self.moves.push(SortMove::Swap {
+                    self.sort_info.moves.push(SortMove::Swap {
                         index1: i,
                         index2: i + gap_length
                     })
@@ -47,74 +47,58 @@ impl Sort for CombSort {
     }
 
     fn advance_sort(&mut self) {
-        if self.is_finished() {
-            self.move_index += 1;
+        if self.sort_info.is_finished() {
+            self.sort_info.move_index += 1;
             return
         }
 
-        match self.moves[self.move_index] {
+        match self.sort_info.moves[self.sort_info.move_index] {
             SortMove::Swap { index1, index2 } => {
-                let tmp = self.data[index1];
-                self.data[index1] = self.data[index2];
-                self.data[index2] = tmp;
+                let tmp = self.sort_info.data[index1];
+                self.sort_info.data[index1] = self.sort_info.data[index2];
+                self.sort_info.data[index2] = tmp;
             }
             SortMove::Write { index, from: _, to } => {
-                self.data[index] = to;
+                self.sort_info.data[index] = to;
             }
             _ => {}
         }
 
-        self.move_index += 1;
+        self.sort_info.move_index += 1;
     }
 
     fn withdraw_sort(&mut self) {
-        if self.move_index == 0 {
+        if self.sort_info.move_index == 0 {
             return;
         }
 
-        self.move_index -= 1;
-        if self.is_finished() {
+        self.sort_info.move_index -= 1;
+        if self.sort_info.is_finished() {
             return;
         }
 
-        match self.moves[self.move_index] {
+        match self.sort_info.moves[self.sort_info.move_index] {
             SortMove::Swap { index1, index2 } => {
-                let tmp = self.data[index1];
-                self.data[index1] = self.data[index2];
-                self.data[index2] = tmp;
+                let tmp = self.sort_info.data[index1];
+                self.sort_info.data[index1] = self.sort_info.data[index2];
+                self.sort_info.data[index2] = tmp;
             }
             SortMove::Write { index, from, .. } => {
-                self.data[index] = from;
+                self.sort_info.data[index] = from;
             }
             _ => {}
         }
     }
 
-    fn is_finished(&self) -> bool {
-        self.move_index >= self.moves.len()
-    }
-
-    fn get_name(&self) -> &'static str {
-        "Comb Sort"
-    }
-
-    fn get_data(&self) -> Vec<u32> {
-        self.data.clone()
-    }
-
-    fn get_move_index(&self) -> usize {
-        self.move_index
-    }
-
-    fn get_move_count(&self) -> usize {
-        self.moves.len()
-    }
-
+    fn get_name(&self) -> &'static str { "Comb Sort" }
+    fn get_data(&self) -> Vec<u32> { self.sort_info.data.clone() }
+    fn get_move_index(&self) -> usize { self.sort_info.move_index }
+    fn get_move_count(&self) -> usize { self.sort_info.moves.len() }
     fn get_current_move(&self) -> SortMove {
-        if self.is_finished() {
+        if self.sort_info.is_finished() {
             SortMove::None
         } else {
-            self.moves[self.move_index]
+            self.sort_info.moves[self.sort_info.move_index]
         }
     }
 }
