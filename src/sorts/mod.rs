@@ -8,3 +8,4 @@ pub mod merge_sort_oop;
 pub mod merge_sort_ip;
 pub mod quick_sort;
 pub mod comb_sort;
+pub mod shell_sort;

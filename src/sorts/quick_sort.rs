@@ -14,7 +14,7 @@ impl Sort for QuickSortRP {
         };
 
         let mut pre_data = data.clone();
-        let len: i64 = pre_data.len() as i64;
+        let len: isize = pre_data.len() as isize;
 
         self.q_sort(&mut pre_data, 0, len-1);
     }
@@ -36,7 +36,7 @@ impl Sort for QuickSortRP {
 }
 
 impl QuickSortRP {
-    fn q_sort(&mut self, data: &mut Vec<u32>, low: i64, high: i64) {
+    fn q_sort(&mut self, data: &mut Vec<u32>, low: isize, high: isize) {
         if low < high {
             let pi = self.partition(data, low, high);
             self.q_sort(data, low, pi - 1);
@@ -44,9 +44,9 @@ impl QuickSortRP {
         }
     }
 
-    fn partition(&mut self, data: &mut Vec<u32>, low: i64, high: i64) -> i64 {
+    fn partition(&mut self, data: &mut Vec<u32>, low: isize, high: isize) -> isize {
         let pivot = data[high as usize];
-        let mut i: i64 = (low as i64) - 1;
+        let mut i: isize = (low as isize) - 1;
 
         for j in low..high {
             self.sort_info.moves.push(SortMove::Read { index: j as usize });

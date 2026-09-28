@@ -21,6 +21,7 @@ pub enum SortType {
     InPlaceMerge,
     QuickRP,
     Comb,
+    Shell,
 }
 
 impl SortType {
@@ -33,7 +34,8 @@ impl SortType {
             SortType::OutOfPlaceMerge => "Out-of-Place Merge Sort",
             SortType::InPlaceMerge => "In-Place Merge Sort",
             SortType::QuickRP => "Quick Sort - Right Pivot",
-            SortType::Comb => "Comb Sort"
+            SortType::Comb => "Comb Sort",
+            SortType::Shell => "Shell Sort",
         }
     }
 }

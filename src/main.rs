@@ -44,6 +44,7 @@ async fn main() {
         SortType::InPlaceMerge,
         SortType::QuickRP,
         SortType::Comb,
+        SortType::Shell,
     ];
     
     let mut select_sorts_state = SelectSortsState {
