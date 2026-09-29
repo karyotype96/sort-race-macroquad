@@ -1,5 +1,3 @@
-use macroquad::input::KeyCode::L;
-
 use crate::sorts::base_sort::{Sort, SortBase, SortMove};
 
 #[derive(Default)]
@@ -17,7 +15,7 @@ impl Sort for OddEvenSort {
 
         let mut pre_data = data.clone();
 
-        for i in 0..pre_data.len() {
+        for _ in 0..pre_data.len() {
             let mut is_sorted = true;
             for j in (0..pre_data.len()).step_by(2) {
                 self.sort_info.moves.push(SortMove::Read { index: j });

@@ -173,6 +173,24 @@ impl WatchSortsState {
         self.sort_frame = 0;
         self.frame = 0;
 
+        let mut i = 0;
+        let mut position_infos: Vec<PositionInfo> = self.sorts.iter().map(|s| {
+            i += 1;
+            PositionInfo { orig_index: i-1, move_count: s.get_move_count(), position: 0 }
+        }).collect();
+
+        position_infos.sort_by(|l, r| {
+            l.move_count.cmp(&r.move_count)
+        });
+
+        for i in 0..position_infos.len() {
+            position_infos[i].position = i as u8;
+        }
+
+        position_infos.sort_by(|l, r| {
+            l.orig_index.cmp(&r.orig_index)
+        });
+
         let max_frame = match self.sorts.iter().map(|sort| {
             sort.get_move_count()
         }).max() {
@@ -181,6 +199,7 @@ impl WatchSortsState {
         };
 
         self.max_frame = max_frame;
+        self.positions = position_infos;
     }
 
     pub fn advance_frame(&mut self) {
