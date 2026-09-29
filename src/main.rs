@@ -7,7 +7,6 @@ use macroquad::prelude::*;
 use macroquad::ui::*;
 use macroquad::input::{KeyCode};
 
-use crate::sorts::base_sort::FRAME_RATE;
 use crate::sorts::base_sort::SortType;
 use crate::state_info::program_state::ListType;
 use crate::state_info::program_state::ProgramState;
@@ -33,6 +32,8 @@ fn window_conf() -> Conf {
 
 #[macroquad::main(window_conf)]
 async fn main() {
+    let frame_rate = (1.0 / get_frame_time()).ceil();
+
     let mut current_state = ProgramState::SelectSorts;
 
     let all_sorts: Vec<SortType> = vec![
@@ -40,6 +41,7 @@ async fn main() {
         SortType::Insertion,
         SortType::Bubble,
         SortType::CocktailShaker,
+        SortType::Cycle,
         SortType::OutOfPlaceMerge,
         SortType::InPlaceMerge,
         SortType::QuickRP,
@@ -67,7 +69,7 @@ async fn main() {
         }
 
         let ops = select_sorts_state.ops_per_second;
-        let actual_speed = FRAME_RATE / ops;
+        let actual_speed = frame_rate / ops;
 
         match current_state {
             ProgramState::SelectSorts => {
