@@ -28,6 +28,13 @@ pub struct WatchSortsState {
     frame: usize,
     sort_frame: usize,
     max_frame: usize,
+    positions: Vec<PositionInfo>,
+}
+
+pub struct PositionInfo {
+    orig_index: usize,
+    move_count: usize,
+    position: u8,
 }
 
 impl WatchSortsState {
@@ -91,6 +98,24 @@ impl WatchSortsState {
             }
         }
 
+        let mut i = 0;
+        let mut position_infos: Vec<PositionInfo> = sorts.iter().map(|s| {
+            i += 1;
+            PositionInfo { orig_index: i-1, move_count: s.get_move_count(), position: 0 }
+        }).collect();
+
+        position_infos.sort_by(|l, r| {
+            l.move_count.cmp(&r.move_count)
+        });
+
+        for i in 0..position_infos.len() {
+            position_infos[i].position = i as u8;
+        }
+
+        position_infos.sort_by(|l, r| {
+            l.orig_index.cmp(&r.orig_index)
+        });
+
         let max_frame = match sorts.iter().map(|sort| {
             sort.get_move_count()
         }).max() {
@@ -107,6 +132,7 @@ impl WatchSortsState {
             frame: 0,
             sort_frame: 0,
             max_frame,
+            positions: position_infos,
         }
     }
 
@@ -199,8 +225,12 @@ impl WatchSortsState {
         let sort_count = self.sorts.len();
         let viewports = get_viewports(sort_count);
 
-        for (i, sort) in self.sorts.iter().enumerate() {
-            sort.draw_sort(viewports[i]);
+        if self.sorts.len() == 1{
+            self.sorts[0].draw_sort(viewports[0], None);
+        } else {
+            for (i, sort) in self.sorts.iter().enumerate() {
+                sort.draw_sort(viewports[i], Some(self.positions[i].position));
+            }
         }
     }
 }

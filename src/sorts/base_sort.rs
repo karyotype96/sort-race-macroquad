@@ -114,7 +114,7 @@ pub trait Sort {
     fn get_move_count(&self) -> usize;
     fn get_current_move(&self) -> SortMove;
 
-    fn draw_sort(&self, viewport_rect: Rect) {
+    fn draw_sort(&self, viewport_rect: Rect, position: Option<u8>) {
         let mut camera1 = Camera2D::from_display_rect(
             Rect {
                 x: 0.0, 
@@ -169,10 +169,22 @@ pub trait Sort {
                 rectangle_color
             );
 
-            draw_rectangle_lines(0.0, 0.0, screen_width(), screen_height(), 5.0, WHITE);
+            draw_rectangle_lines(0.0, 0.0, screen_width(), screen_height(), 10.0, WHITE);
             draw_text(format!("{}", self.get_name()), 25.0, 50.0, 48.0, WHITE);
+
             if self.get_move_index() >= self.get_move_count(){
-                draw_text("Finished!", 25.0, 100.0, 48.0, YELLOW);
+                match position {
+                    Some(pos) => {
+                        let pos_suffix = match pos+1 {
+                            1 => "st",
+                            2 => "nd",
+                            3 => "rd",
+                            _ => "th"
+                        };
+                        draw_text(format!("Finished ({}{} place)!", pos+1, pos_suffix), 25.0, 100.0, 48.0, YELLOW);
+                    }
+                    None => { draw_text("Finished!", 25.0, 100.0, 48.0, YELLOW); }
+                }
             }
         }
 
