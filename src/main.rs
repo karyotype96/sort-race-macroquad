@@ -42,6 +42,7 @@ async fn main() {
         SortType::Bubble,
         SortType::CocktailShaker,
         SortType::Cycle,
+        SortType::OddEven,
         SortType::OutOfPlaceMerge,
         SortType::InPlaceMerge,
         SortType::QuickRP,
