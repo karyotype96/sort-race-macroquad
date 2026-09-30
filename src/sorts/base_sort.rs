@@ -23,23 +23,25 @@ pub enum SortType {
     QuickRP,
     Comb,
     Shell,
+    RadixLSD(u32),
 }
 
 impl SortType {
-    pub fn get_name(&self) -> &'static str {
+    pub fn get_name(&self) -> String {
         match *self {
-            SortType::Selection => "Selection Sort",
-            SortType::Insertion => "Insertion Sort",
-            SortType::Bubble => "Bubble Sort",
-            SortType::CocktailShaker => "Cocktail Shaker Sort",
-            SortType::Cycle => "Cycle Sort",
-            SortType::OddEven => "Odd-Even Sort",
-            SortType::OutOfPlaceMerge => "Out-of-Place Merge Sort",
-            SortType::InPlaceMerge => "In-Place Merge Sort",
-            SortType::Heap => "Heap Sort",
-            SortType::QuickRP => "Quick Sort - Right Pivot",
-            SortType::Comb => "Comb Sort",
-            SortType::Shell => "Shell Sort",
+            SortType::Selection => String::from("Selection Sort"),
+            SortType::Insertion => String::from("Insertion Sort"),
+            SortType::Bubble => String::from("Bubble Sort"),
+            SortType::CocktailShaker => String::from("Cocktail Shaker Sort"),
+            SortType::Cycle => String::from("Cycle Sort"),
+            SortType::OddEven => String::from("Odd-Even Sort"),
+            SortType::OutOfPlaceMerge => String::from("Out-of-Place Merge Sort"),
+            SortType::InPlaceMerge => String::from("In-Place Merge Sort"),
+            SortType::Heap => String::from("Heap Sort"),
+            SortType::QuickRP => String::from("Quick Sort - Right Pivot"),
+            SortType::Comb => String::from("Comb Sort"),
+            SortType::Shell => String::from("Shell Sort"),
+            SortType::RadixLSD(radix) => format!("Radix Sort (Base {})", radix),
         }
     }
 }
@@ -108,7 +110,7 @@ pub trait Sort {
     fn init_sort(&mut self, data: &Vec<u32>);
 
     // should be different for each sort
-    fn get_name(&self) -> &'static str;
+    fn get_name(&self) -> String;
 
     fn advance_sort(&mut self);
     fn withdraw_sort(&mut self);

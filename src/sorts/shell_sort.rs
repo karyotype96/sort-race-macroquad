@@ -37,7 +37,7 @@ impl Sort for ShellSort {
     fn advance_sort(&mut self) { self.sort_info.advance_sort(); }
     fn withdraw_sort(&mut self) { self.sort_info.withdraw_sort(); }
 
-    fn get_name(&self) -> &'static str { "Shell Sort" }
+    fn get_name(&self) -> String { String::from("Shell Sort") }
     fn get_move_index(&self) -> usize { self.sort_info.move_index }
     fn get_data(&self) -> Vec<u32> { self.sort_info.data.clone() }
     fn get_move_count(&self) -> usize { self.sort_info.moves.len() }

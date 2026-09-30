@@ -78,7 +78,7 @@ impl Sort for SelectionSort {
         }
     }
 
-    fn get_name(&self) -> &'static str { "Selection Sort" }
+    fn get_name(&self) -> String { String::from("Selection Sort") }
     fn get_data(&self) -> Vec<u32> { self.sort_info.data.clone() }
     fn get_move_index(&self) -> usize { self.sort_info.move_index }
     fn get_move_count(&self) -> usize { self.sort_info.moves.len() }

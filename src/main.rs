@@ -49,6 +49,10 @@ async fn main() {
         SortType::QuickRP,
         SortType::Comb,
         SortType::Shell,
+        SortType::RadixLSD(2),
+        SortType::RadixLSD(8),
+        SortType::RadixLSD(10),
+        SortType::RadixLSD(16),
     ];
     
     let mut select_sorts_state = SelectSortsState {
@@ -95,6 +99,7 @@ async fn main() {
                         ui.label(None, "Select sorts to show:");
                         for i in 0..all_sorts.len() {
                             let name = all_sorts[i].get_name();
+                            let name = name.as_str();
                             ui.checkbox(hash!(name), 
                                 name,
                                 &mut select_sorts_state.sorts[i]

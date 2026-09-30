@@ -1,7 +1,7 @@
 use macroquad::{input::{KeyCode, is_key_pressed}, rand::ChooseRandom};
 
 use crate::{helpers::viewports::get_viewports, sorts::{
-    base_sort::{Sort, SortType::{self}}, bubble_sort::BubbleSort, cocktail_shaker_sort::CocktailShakerSort, comb_sort::CombSort, cycle_sort::CycleSort, heap_sort::HeapSort, insertion_sort::*, merge_sort_ip::InPlaceMergeSort, merge_sort_oop::OutOfPlaceMergeSort, odd_even_sort::OddEvenSort, quick_sort::QuickSortRP, selection_sort::*, shell_sort::ShellSort,
+    base_sort::{Sort, SortType::{self}}, bubble_sort::BubbleSort, cocktail_shaker_sort::CocktailShakerSort, comb_sort::CombSort, cycle_sort::CycleSort, heap_sort::HeapSort, insertion_sort::*, merge_sort_ip::InPlaceMergeSort, merge_sort_oop::OutOfPlaceMergeSort, odd_even_sort::OddEvenSort, quick_sort::QuickSortRP, radix_sort::RadixSortLSD, selection_sort::*, shell_sort::ShellSort,
 }};
 
 pub enum ProgramState {
@@ -105,6 +105,11 @@ impl WatchSortsState {
                     sort.init_sort(&data);
                     sorts.push(Box::new(sort));
                 },
+                SortType::RadixLSD(radix) => {
+                    let mut sort = RadixSortLSD::new(*radix);
+                    sort.init_sort(&data);
+                    sorts.push(Box::new(sort));
+                }
             }
         }
 
