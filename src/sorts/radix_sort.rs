@@ -64,14 +64,14 @@ impl RadixSortLSD {
     fn count_sort_by_digit(&mut self, data: &mut Vec<u32>, exponent: u32, min_value: u32) {
         let radix = self.radix_base;
 
-        let mut bucketIndex = 0;
+        let mut bucket_index;
         let mut buckets = vec![0; radix as usize];
         let mut outputs = vec![0; data.len()];
 
         for i in 0..data.len() {
             self.sort_info.moves.push(SortMove::Read { index: i });
-            bucketIndex = (((data[i] - min_value) / exponent) % radix) as usize;
-            buckets[bucketIndex] += 1;
+            bucket_index = (((data[i] - min_value) / exponent) % radix) as usize;
+            buckets[bucket_index] += 1;
         }
 
         for i in 1..(radix as usize) {
@@ -79,9 +79,9 @@ impl RadixSortLSD {
         }
 
         for i in (0..data.len()).rev() {
-            bucketIndex = (((data[i] - min_value) / exponent) % radix) as usize;
-            buckets[bucketIndex] -= 1;
-            outputs[buckets[bucketIndex] as usize] = data[i];
+            bucket_index = (((data[i] - min_value) / exponent) % radix) as usize;
+            buckets[bucket_index] -= 1;
+            outputs[buckets[bucket_index] as usize] = data[i];
         }
 
         for i in 0..data.len() {

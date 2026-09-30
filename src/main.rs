@@ -46,6 +46,7 @@ async fn main() {
         SortType::OutOfPlaceMerge,
         SortType::InPlaceMerge,
         SortType::Heap,
+        SortType::Smooth,
         SortType::QuickRP,
         SortType::Comb,
         SortType::Shell,

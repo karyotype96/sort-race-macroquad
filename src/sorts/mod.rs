@@ -9,6 +9,7 @@ pub mod odd_even_sort;
 pub mod merge_sort_oop;
 pub mod merge_sort_ip;
 pub mod heap_sort;
+pub mod smooth_sort;
 pub mod quick_sort;
 pub mod comb_sort;
 pub mod shell_sort;
