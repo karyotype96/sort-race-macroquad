@@ -53,6 +53,8 @@ pub struct SortBase {
     pub data: Vec<u32>,
     pub moves: Vec<SortMove>,
     pub move_index: usize,
+    pub reads: usize,
+    pub writes: usize,
 }
 
 impl SortBase {
@@ -69,8 +71,10 @@ impl SortBase {
                 self.data[index1] = self.data[index2];
                 self.data[index2] = tmp;
             } */
+            SortMove::Read { index: _ } => { self.reads += 1; }
             SortMove::Write { index, from: _, to } => {
                 self.data[index] = to;
+                self.writes += 1;
             }
             _ => {}
         }
@@ -90,13 +94,10 @@ impl SortBase {
         }
 
         match self.moves[self.move_index] {
-            /* SortMove::Swap { index1, index2 } => {
-                let tmp = self.data[index1];
-                self.data[index1] = self.data[index2];
-                self.data[index2] = tmp;
-            } */
+            SortMove::Read { index: _ } => { self.reads -= 1; }
             SortMove::Write { index, from, .. } => {
                 self.data[index] = from;
+                self.writes -= 1;
             }
             _ => {}
         }
@@ -140,6 +141,8 @@ pub trait Sort {
     fn get_move_index(&self) -> usize;
     fn get_move_count(&self) -> usize;
     fn get_current_move(&self) -> SortMove;
+    fn get_reads(&self) -> usize;
+    fn get_writes(&self) -> usize;
 
     fn draw_sort(&self, viewport_rect: Rect, position: Option<u8>) {
         let mut camera1 = Camera2D::from_display_rect(
@@ -197,7 +200,9 @@ pub trait Sort {
             );
 
             draw_rectangle_lines(0.0, 0.0, screen_width(), screen_height(), 10.0, WHITE);
-            draw_text(format!("{}", self.get_name()), 25.0, 50.0, 48.0, WHITE);
+            let reads = self.get_reads();
+            let writes = self.get_writes();
+            draw_text(format!("{} ({} reads, {} writes, {} moves total)", self.get_name(), reads, writes, reads + writes), 25.0, 50.0, 48.0, WHITE);
 
             if self.get_move_index() >= self.get_move_count(){
                 match position {

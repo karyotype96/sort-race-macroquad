@@ -10,7 +10,7 @@ impl Sort for CombSort {
         self.sort_info = SortBase {
             data: data.clone(),
             moves: Vec::new(),
-            move_index: 0,
+            ..Default::default()
         };
 
         let mut pre_data = data.clone();
@@ -43,6 +43,9 @@ impl Sort for CombSort {
     fn get_data(&self) -> Vec<u32> { self.sort_info.data.clone() }
     fn get_move_index(&self) -> usize { self.sort_info.move_index }
     fn get_move_count(&self) -> usize { self.sort_info.moves.len() }
+    fn get_reads(&self) -> usize { self.sort_info.reads }
+    fn get_writes(&self) -> usize { self.sort_info.writes }
+    
     fn get_current_move(&self) -> SortMove {
         if self.sort_info.is_finished() {
             SortMove::None
