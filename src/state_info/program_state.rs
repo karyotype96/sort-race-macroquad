@@ -1,3 +1,5 @@
+use std::ops::{Shl, Shr};
+
 use macroquad::{input::{KeyCode, is_key_pressed}, rand::ChooseRandom};
 
 use crate::{helpers::viewports::get_viewports, sorts::{
@@ -15,7 +17,8 @@ pub enum ListType {
     #[default]
     FullyRandom,
     SlightlyRandom,
-    Reversed
+    Reversed,
+    BitReversed,
 }
 
 #[derive(Default)]
@@ -298,6 +301,17 @@ fn randomize_data(list_type: ListType, list_size: u32) -> Vec<u32> {
         },
         ListType::Reversed => {
             data.reverse();
+        },
+        ListType::BitReversed => {
+            let usize_size = size_of::<u32>() * 8;
+            let list_size_power2 = (list_size as f64).log2() as usize;
+
+            let (bitmask, _) = ((list_size-1) as usize).overflowing_shl((usize_size - list_size_power2) as u32);
+            
+            for i in 0..list_size as usize {
+                data[i] -= 1;
+                data[i] = ((data[i].reverse_bits() as usize & bitmask).shr(usize_size - list_size_power2)) as u32;
+            }
         }
     };
 

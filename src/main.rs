@@ -64,7 +64,7 @@ async fn main() {
         list_size_exponent: 4.0,
     };
 
-    let list_type_options = &["Fully Random", "Slightly Random", "Reversed"];
+    let list_type_options = &["Fully Random", "Slightly Random", "Reversed", "Bit Reversed"];
 
     let mut watch_sorts_state = WatchSortsState::default();
 
@@ -174,7 +174,8 @@ async fn main() {
                                 let list_type = match select_sorts_state.list_type {
                                     0 => ListType::FullyRandom,
                                     1 => ListType::SlightlyRandom,
-                                    _ => ListType::Reversed,
+                                    2 => ListType::Reversed,
+                                    _ => ListType::BitReversed,
                                 };
 
                                 watch_sorts_state = WatchSortsState::new(
