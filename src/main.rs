@@ -44,6 +44,7 @@ async fn main() {
         SortType::Cycle,
         SortType::OddEven,
         SortType::Pancake,
+        SortType::Gravity,
         SortType::OutOfPlaceMerge,
         SortType::InPlaceMerge,
         SortType::Heap,
@@ -55,6 +56,7 @@ async fn main() {
         SortType::RadixLSD(8),
         SortType::RadixLSD(10),
         SortType::RadixLSD(16),
+        SortType::AmericanFlag(64),
         SortType::AmericanFlag(128),
     ];
     

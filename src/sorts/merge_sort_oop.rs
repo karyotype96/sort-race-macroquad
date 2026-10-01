@@ -54,6 +54,7 @@ impl OutOfPlaceMergeSort {
 
         for i in low..high {
             self.sort_info.read(i);
+            self.sort_info.do_nothing();
             if i < halfway_point {
                 left.push(data[i]);
             } else {
@@ -67,6 +68,8 @@ impl OutOfPlaceMergeSort {
         let mut arr_index = low;
 
         while left_index < left.len() && right_index < right.len() && arr_index < high {
+            self.sort_info.do_nothing();
+            self.sort_info.do_nothing();
             if left[left_index] <= right[right_index] {
                 self.sort_info.write(data, arr_index, left[left_index]);
                 left_index += 1;

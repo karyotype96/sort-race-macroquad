@@ -18,6 +18,7 @@ pub enum SortType {
     Cycle,
     OddEven,
     Pancake,
+    Gravity,
     OutOfPlaceMerge,
     InPlaceMerge,
     Heap,
@@ -39,6 +40,7 @@ impl SortType {
             SortType::Cycle => String::from("Cycle Sort"),
             SortType::OddEven => String::from("Odd-Even Sort"),
             SortType::Pancake => String::from("Pancake Sort"),
+            SortType::Gravity => String::from("Gravity Sort"),
             SortType::OutOfPlaceMerge => String::from("Out-of-Place Merge Sort"),
             SortType::InPlaceMerge => String::from("In-Place Merge Sort"),
             SortType::Heap => String::from("Heap Sort"),
@@ -70,11 +72,6 @@ impl SortBase {
         }
 
         match self.moves[self.move_index] {
-            /* SortMove::Swap { index1, index2 } => {
-                let tmp = self.data[index1];
-                self.data[index1] = self.data[index2];
-                self.data[index2] = tmp;
-            } */
             SortMove::Read { index: _ } => { self.reads += 1; }
             SortMove::Write { index, from: _, to } => {
                 self.data[index] = to;
@@ -128,6 +125,12 @@ impl SortBase {
     pub fn write(&mut self, data: &mut Vec<u32>, index: usize, val: u32) {
         self.moves.push(SortMove::Write { index, from: data[index], to: val });
         data[index] = val;
+    }
+
+    // note: this is primarily going to be used when an auxiliary
+    // array is written to.
+    pub fn do_nothing(&mut self) {
+        self.moves.push(SortMove::None);
     }
 }
 

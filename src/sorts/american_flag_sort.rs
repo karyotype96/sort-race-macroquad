@@ -92,26 +92,35 @@ impl AmericanFlagSort {
             let d = data[i];
             let digit = self.get_digit(d, divisor);
 
+            self.sort_info.do_nothing();
             count[digit as usize] += 1;
         }
 
         offset[0] = start as u32;
 
         for i in 1..bucket_count as usize {
+            self.sort_info.do_nothing();
+            self.sort_info.do_nothing();
+            self.sort_info.do_nothing();
             offset[i] = count[i-1] + offset[i-1];
         }
 
         for b in 0..bucket_count as usize {
             while count[b] > 0 {
+                self.sort_info.do_nothing();
                 let origin = offset[b];
                 let mut from = origin;
+                self.sort_info.do_nothing();
                 let mut num = data[from as usize];
 
                 loop {
                     digit = self.get_digit(num, divisor);
+                    self.sort_info.do_nothing();
                     let to = offset[digit as usize];
 
+                    self.sort_info.do_nothing();
                     offset[digit as usize] += 1;
+                    self.sort_info.do_nothing();
                     count[digit as usize] -= 1;
 
                     let tmp = data[to as usize];
@@ -130,10 +139,14 @@ impl AmericanFlagSort {
         if divisor > 1 {
             for i in 0..bucket_count as usize {
                 let begin = match i > 0 {
-                    true => offset[i-1],
+                    true => {
+                        self.sort_info.do_nothing();
+                        offset[i-1]
+                    },
                     false => start as u32
                 };
 
+                self.sort_info.do_nothing();
                 let end = offset[i];
 
                 if end - begin > 1 {

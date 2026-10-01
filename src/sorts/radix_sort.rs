@@ -16,13 +16,17 @@ impl Sort for RadixSortLSD {
 
         let mut pre_data = data.clone();
     
+        self.sort_info.read(0);
         let mut min_value = pre_data[0];
+        self.sort_info.read(0);
         let mut max_value = pre_data[0];
 
         for i in 1..pre_data.len() {
             if data[i] < min_value {
+                self.sort_info.read(i);
                 min_value = data[i];
             } else if data[i] > max_value {
+                self.sort_info.read(i);
                 max_value = data[i]
             }
         }
@@ -73,20 +77,28 @@ impl RadixSortLSD {
         for i in 0..data.len() {
             self.sort_info.read(i);
             bucket_index = (((data[i] - min_value) / exponent) % radix) as usize;
+            self.sort_info.do_nothing();
             buckets[bucket_index] += 1;
         }
 
         for i in 1..(radix as usize) {
+            self.sort_info.do_nothing();
+            self.sort_info.do_nothing();
             buckets[i] += buckets[i-1];
         }
 
         for i in (0..data.len()).rev() {
+            self.sort_info.read(i);
             bucket_index = (((data[i] - min_value) / exponent) % radix) as usize;
+            self.sort_info.do_nothing();
             buckets[bucket_index] -= 1;
+            self.sort_info.read(i);
+            self.sort_info.do_nothing();
             outputs[buckets[bucket_index] as usize] = data[i];
         }
 
         for i in 0..data.len() {
+            self.sort_info.do_nothing();
             self.sort_info.write(data, i, outputs[i]);
         }
     }
