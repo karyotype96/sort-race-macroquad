@@ -26,6 +26,7 @@ pub enum SortType {
     Comb,
     Shell,
     RadixLSD(u32),
+    AmericanFlag(u32),
 }
 
 impl SortType {
@@ -46,6 +47,7 @@ impl SortType {
             SortType::Comb => String::from("Comb Sort"),
             SortType::Shell => String::from("Shell Sort"),
             SortType::RadixLSD(radix) => format!("Radix Sort (Base {})", radix),
+            SortType::AmericanFlag(bucket_count) => format!("American Flag Sort ({} Buckets)", bucket_count),
         }
     }
 }

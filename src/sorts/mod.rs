@@ -15,3 +15,4 @@ pub mod quick_sort;
 pub mod comb_sort;
 pub mod shell_sort;
 pub mod radix_sort;
+pub mod american_flag_sort;

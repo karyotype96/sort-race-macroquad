@@ -55,6 +55,7 @@ async fn main() {
         SortType::RadixLSD(8),
         SortType::RadixLSD(10),
         SortType::RadixLSD(16),
+        SortType::AmericanFlag(128),
     ];
     
     let mut select_sorts_state = SelectSortsState {

@@ -3,7 +3,7 @@ use std::ops::{Shr};
 use macroquad::{input::{KeyCode, is_key_pressed}, rand::ChooseRandom};
 
 use crate::{helpers::viewports::get_viewports, sorts::{
-    base_sort::{Sort, SortType::{self}}, bubble_sort::BubbleSort, cocktail_shaker_sort::CocktailShakerSort, comb_sort::CombSort, cycle_sort::CycleSort, heap_sort::HeapSort, insertion_sort::*, merge_sort_ip::InPlaceMergeSort, merge_sort_oop::OutOfPlaceMergeSort, odd_even_sort::OddEvenSort, pancake_sort::PancakeSort, quick_sort::QuickSortRP, radix_sort::RadixSortLSD, selection_sort::*, shell_sort::ShellSort, smooth_sort::SmoothSort,
+    american_flag_sort::AmericanFlagSort, base_sort::{Sort, SortType::{self}}, bubble_sort::BubbleSort, cocktail_shaker_sort::CocktailShakerSort, comb_sort::CombSort, cycle_sort::CycleSort, heap_sort::HeapSort, insertion_sort::*, merge_sort_ip::InPlaceMergeSort, merge_sort_oop::OutOfPlaceMergeSort, odd_even_sort::OddEvenSort, pancake_sort::PancakeSort, quick_sort::QuickSortRP, radix_sort::RadixSortLSD, selection_sort::*, shell_sort::ShellSort, smooth_sort::SmoothSort,
 }};
 
 pub enum ProgramState {
@@ -123,6 +123,11 @@ impl WatchSortsState {
                     let mut sort = RadixSortLSD::new(*radix);
                     sort.init_sort(&data);
                     sorts.push(Box::new(sort));
+                },
+                SortType::AmericanFlag(bucket_count) => {
+                    let mut sort = AmericanFlagSort::new(*bucket_count);
+                    sort.init_sort(&data);
+                    sorts.push(Box::new(sort));
                 }
             }
         }
@@ -197,6 +202,13 @@ impl WatchSortsState {
         self.sort_frame = 0;
         self.frame = 0;
 
+        /*
+            This code assigns to each sort the order in which it completes.
+            It does this by sorting them in order of least-to-most moves,
+            putting ranking numbers on them based on the order in which
+            they appear, and then re-ordering them based on their original
+            index.
+        */
         let mut i = 0;
         let mut position_infos: Vec<PositionInfo> = self.sorts.iter().map(|s| {
             i += 1;
@@ -304,6 +316,13 @@ fn randomize_data(list_type: ListType, list_size: u32) -> Vec<u32> {
             data.reverse();
         },
         ListType::BitReversed => {
+            /* 
+                A bit reversal is done by literally taking all of the bits
+                and reversing their order. This is done within the constraints
+                of the size of the list, not the data type, so if we're working
+                with a list size of 128, we would only be reversing the 7 least
+                significant bits (log base 2 of 128 = 7).
+            */
             let usize_size = size_of::<u32>() * 8;
             let list_size_power2 = (list_size as f64).log2() as usize;
 
