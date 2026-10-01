@@ -20,22 +20,12 @@ impl Sort for CombSort {
         while !is_sorted || gap_length > 1 {
             is_sorted = true;
             for i in 0..(pre_data.len()-gap_length){
-                self.sort_info.moves.push(SortMove::Read {
-                    index: i,
-                });
-                self.sort_info.moves.push(SortMove::Read {
-                    index: i+gap_length,
-                });
+                self.sort_info.read(i);
+                self.sort_info.read(i+1);
 
                 if pre_data[i] > pre_data[i + gap_length] {
                     is_sorted = false;
-                    let tmp = pre_data[i];
-                    pre_data[i] = pre_data[i + gap_length];
-                    pre_data[i + gap_length] = tmp;
-                    self.sort_info.moves.push(SortMove::Swap {
-                        index1: i,
-                        index2: i + gap_length
-                    })
+                    self.sort_info.swap(&mut pre_data, i, i + gap_length);
                 }
             }
 

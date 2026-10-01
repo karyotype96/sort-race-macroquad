@@ -22,8 +22,8 @@ impl Sort for CycleSort {
             for i in cycle_start+1..pre_data.len() {
                 if pre_data[i] < item {
                     pos += 1;
-                    self.sort_info.moves.push(SortMove::Read { index: cycle_start });
-                    self.sort_info.moves.push(SortMove::Read { index: pos });
+                    self.sort_info.read(cycle_start);
+                    self.sort_info.read(pos);
                 }
             }
 
@@ -32,16 +32,15 @@ impl Sort for CycleSort {
             }
 
             while item == pre_data[pos] {
-                self.sort_info.moves.push(SortMove::Read { index: pos });
+                self.sort_info.read(pos);
                 pos += 1;
             }
 
             if pos != cycle_start {
                 let tmp = item;
-                self.sort_info.moves.push(SortMove::Read { index: pos });
+                self.sort_info.read(pos);
                 item = pre_data[pos];
-                self.sort_info.moves.push(SortMove::Write { index: pos, from: pre_data[pos], to: tmp });
-                pre_data[pos] = tmp;
+                self.sort_info.write(&mut pre_data, pos, tmp);
             }
 
             while pos != cycle_start {
@@ -50,23 +49,22 @@ impl Sort for CycleSort {
                 for i in cycle_start+1..pre_data.len() {
                     if pre_data[i] < item {
                         pos += 1;
-                        self.sort_info.moves.push(SortMove::Read { index: cycle_start });
-                        self.sort_info.moves.push(SortMove::Read { index: pos });
+                        self.sort_info.read(cycle_start);
+                        self.sort_info.read(pos);
                     }
                 }
 
-                self.sort_info.moves.push(SortMove::Read { index: pos });
+                self.sort_info.read(pos);
                 while item == pre_data[pos] {
                     pos += 1;
-                    self.sort_info.moves.push(SortMove::Read { index: pos });
+                    self.sort_info.read(pos);
                 }
 
                 if item != pre_data[pos] {
                     let tmp = item;
-                    self.sort_info.moves.push(SortMove::Read { index: pos });
+                    self.sort_info.read(pos);
                     item = pre_data[pos];
-                    self.sort_info.moves.push(SortMove::Write { index: pos, from: pre_data[pos], to: tmp });
-                    pre_data[pos] = tmp;
+                    self.sort_info.write(&mut pre_data,pos, tmp);
                 }
 
             }

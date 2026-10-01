@@ -49,20 +49,14 @@ impl QuickSortRP {
         let mut i: isize = (low as isize) - 1;
 
         for j in low..high {
-            self.sort_info.moves.push(SortMove::Read { index: j as usize });
+            self.sort_info.read(j as usize);
             if data[j as usize] < pivot {
                 i += 1;
-                self.sort_info.moves.push(SortMove::Swap {index1: i as usize, index2: j as usize});
-                let tmp = data[i as usize];
-                data[i as usize] = data[j as usize];
-                data[j as usize] = tmp;
+                self.sort_info.swap(data, i as usize, j as usize);
             }
         }
 
-        self.sort_info.moves.push(SortMove::Swap { index1: (i+1) as usize, index2: high as usize });
-        let tmp = data[(i+1) as usize];
-        data[(i+1) as usize] = data[high as usize];
-        data[high as usize] = tmp;
+        self.sort_info.swap(data, (i+1) as usize, high as usize);
 
         i + 1
     }

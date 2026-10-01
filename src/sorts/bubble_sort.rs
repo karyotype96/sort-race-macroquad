@@ -17,19 +17,18 @@ impl Sort for BubbleSort {
         for _ in 0..pre_data.len() {
             let mut is_ordered = true;
             for j in 0..pre_data.len() - 1 {
-                self.sort_info.moves.push(SortMove::Read {
-                    index: j
-                });
+                self.sort_info.read(j);
 
                 if pre_data[j] > pre_data[j+1] {
                     is_ordered = false;
-                    let tmp = pre_data[j];
+                    self.sort_info.swap(&mut pre_data, j, j+1);
+                    /* let tmp = pre_data[j];
                     pre_data[j] = pre_data[j+1];
                     pre_data[j+1] = tmp;
                     self.sort_info.moves.push(SortMove::Swap {
                         index1: j,
                         index2: j+1,
-                    });
+                    }); */
                 }
             }
             if is_ordered {

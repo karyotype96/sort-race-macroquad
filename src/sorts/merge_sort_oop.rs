@@ -50,7 +50,7 @@ impl OutOfPlaceMergeSort {
         let mut right: Vec<u32> = Vec::with_capacity(high - halfway_point);
 
         for i in low..high {
-            self.sort_info.moves.push(SortMove::Read { index: i });
+            self.sort_info.read(i);
             if i < halfway_point {
                 left.push(data[i]);
             } else {
@@ -65,27 +65,23 @@ impl OutOfPlaceMergeSort {
 
         while left_index < left.len() && right_index < right.len() && arr_index < high {
             if left[left_index] <= right[right_index] {
-                self.sort_info.moves.push(SortMove::Write { index: arr_index, from: data[arr_index], to: left[left_index] });
-                data[arr_index] = left[left_index];
+                self.sort_info.write(data, arr_index, left[left_index]);
                 left_index += 1;
             } else {
-                self.sort_info.moves.push(SortMove::Write { index: arr_index, from: data[arr_index], to: right[right_index] });
-                data[arr_index] = right[right_index];
+                self.sort_info.write(data, arr_index, right[right_index]);
                 right_index += 1;
             }
             arr_index += 1;
         }
 
         while left_index < left.len() {
-            self.sort_info.moves.push(SortMove::Write { index: arr_index, from: data[arr_index], to: left[left_index] });
-            data[arr_index] = left[left_index];
+            self.sort_info.write(data, arr_index, left[left_index]);
             arr_index += 1;
             left_index += 1;
         }
 
         while right_index < right.len() {
-            self.sort_info.moves.push(SortMove::Write { index: arr_index, from: data[arr_index], to: right[right_index] });
-            data[arr_index] = right[right_index];
+            self.sort_info.write(data, arr_index, right[right_index]);
             arr_index += 1;
             right_index += 1;
         }

@@ -16,15 +16,9 @@ impl Sort for InsertionSort {
         let mut pre_data = data.clone();
         for i in 1..pre_data.len() {
             let mut j = i;
-            self.sort_info.moves.push(SortMove::Read { index: i });
+            self.sort_info.read(i);
             while j > 0 && pre_data[j - 1] > pre_data[j] {
-                let tmp = pre_data[j-1];
-                pre_data[j-1] = pre_data[j];
-                pre_data[j] = tmp;
-                self.sort_info.moves.push(SortMove::Swap {
-                    index1: j-1,
-                    index2: j
-                });
+                self.sort_info.swap(&mut pre_data, j-1, j);
 
                 j -= 1;
             }

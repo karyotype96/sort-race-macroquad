@@ -18,13 +18,10 @@ impl Sort for OddEvenSort {
         for _ in 0..pre_data.len() {
             let mut is_sorted = true;
             for j in (0..pre_data.len()).step_by(2) {
-                self.sort_info.moves.push(SortMove::Read { index: j });
+                self.sort_info.read(j);
                 if pre_data[j] > pre_data[j+1] {
                     is_sorted = false;
-                    self.sort_info.moves.push(SortMove::Swap { index1: j, index2: j+1 });
-                    let tmp = pre_data[j];
-                    pre_data[j] = pre_data[j+1];
-                    pre_data[j+1] = tmp;
+                    self.sort_info.swap(&mut pre_data, j, j+1);
                 }
             }
 
@@ -32,10 +29,7 @@ impl Sort for OddEvenSort {
                 self.sort_info.moves.push(SortMove::Read { index: j });
                 if pre_data[j] > pre_data[j+1] {
                     is_sorted = false;
-                    self.sort_info.moves.push(SortMove::Swap { index1: j, index2: j+1 });
-                    let tmp = pre_data[j];
-                    pre_data[j] = pre_data[j+1];
-                    pre_data[j+1] = tmp;
+                    self.sort_info.swap(&mut pre_data, j, j+1);
                 }
             }
 

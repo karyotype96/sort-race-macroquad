@@ -6,7 +6,7 @@ use crate::helpers::map_range::map_range;
 pub enum SortMove {
     None,
     Read { index: usize },
-    Swap { index1: usize, index2: usize },
+    // Swap { index1: usize, index2: usize },
     Write { index: usize, from: u32, to: u32 },
 }
 
@@ -64,11 +64,11 @@ impl SortBase {
         }
 
         match self.moves[self.move_index] {
-            SortMove::Swap { index1, index2 } => {
+            /* SortMove::Swap { index1, index2 } => {
                 let tmp = self.data[index1];
                 self.data[index1] = self.data[index2];
                 self.data[index2] = tmp;
-            }
+            } */
             SortMove::Write { index, from: _, to } => {
                 self.data[index] = to;
             }
@@ -90,11 +90,11 @@ impl SortBase {
         }
 
         match self.moves[self.move_index] {
-            SortMove::Swap { index1, index2 } => {
+            /* SortMove::Swap { index1, index2 } => {
                 let tmp = self.data[index1];
                 self.data[index1] = self.data[index2];
                 self.data[index2] = tmp;
-            }
+            } */
             SortMove::Write { index, from, .. } => {
                 self.data[index] = from;
             }
@@ -104,6 +104,25 @@ impl SortBase {
 
     pub fn is_finished(&self) -> bool {
         self.move_index >= self.moves.len()
+    }
+
+    pub fn read(&mut self, index: usize) {
+        self.moves.push(SortMove::Read { index });
+    }
+
+    pub fn swap(&mut self, data: &mut Vec<u32>, index1: usize, index2: usize) {
+        // self.moves.push(SortMove::Swap{ index1, index2 });
+        self.moves.push(SortMove::Read { index: index1 });
+        let tmp = data[index1];
+        self.moves.push(SortMove::Write { index: index1, from: data[index1], to: data[index2] });
+        data[index1] = data[index2];
+        self.moves.push(SortMove::Write { index: index2, from: data[index2], to: tmp });
+        data[index2] = tmp;
+    }
+
+    pub fn write(&mut self, data: &mut Vec<u32>, index: usize, val: u32) {
+        self.moves.push(SortMove::Write { index, from: data[index], to: val });
+        data[index] = val;
     }
 }
 
@@ -154,11 +173,11 @@ pub trait Sort {
                         rectangle_color = WHITE;
                     }
                 }
-                SortMove::Swap { index1, index2 } => {
+                /* SortMove::Swap { index1, index2 } => {
                     if i == index1 || i == index2 {
                         rectangle_color = WHITE;
                     }
-                }
+                } */
                 SortMove::Write { index, .. } => {
                     if i == index {
                         rectangle_color = WHITE;

@@ -69,7 +69,7 @@ impl RadixSortLSD {
         let mut outputs = vec![0; data.len()];
 
         for i in 0..data.len() {
-            self.sort_info.moves.push(SortMove::Read { index: i });
+            self.sort_info.read(i);
             bucket_index = (((data[i] - min_value) / exponent) % radix) as usize;
             buckets[bucket_index] += 1;
         }
@@ -85,8 +85,7 @@ impl RadixSortLSD {
         }
 
         for i in 0..data.len() {
-            self.sort_info.moves.push(SortMove::Write { index: i, from: data[i], to: outputs[i] });
-            data[i] = outputs[i];
+            self.sort_info.write(data, i, outputs[i]);
         }
     }
 }

@@ -21,12 +21,10 @@ impl Sort for ShellSort {
 
             for i in gap..(pre_data.len() as isize) {
                 let mut j: isize = i as isize;
-                self.sort_info.moves.push(SortMove::Read { index: j as usize });
+                self.sort_info.read(j as usize);
+
                 while j - gap >= 0 && pre_data[j as usize] < pre_data[(j - gap) as usize] {
-                    self.sort_info.moves.push(SortMove::Swap { index1: j as usize, index2: (j - gap) as usize});
-                    let tmp = pre_data[(j - gap) as usize];
-                    pre_data[(j - gap) as usize] = pre_data[j as usize];
-                    pre_data[j as usize] = tmp;
+                    self.sort_info.swap(&mut pre_data, j as usize, (j - gap) as usize);
 
                     j -= gap;
                 }

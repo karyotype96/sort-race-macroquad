@@ -18,65 +18,21 @@ impl Sort for SelectionSort {
             let mut min_index = i;
 
             for j in i..pre_data.len() {
-                self.sort_info.moves.push(SortMove::Read { index: j });
+                self.sort_info.read(j);
+                self.sort_info.read(min_index);
                 if pre_data[j] < pre_data[min_index] {
                     min_index = j;
                 }
             }
 
             if i != min_index {
-                let tmp = pre_data[i];
-                pre_data[i] = pre_data[min_index];
-                pre_data[min_index] = tmp;
-
-                self.sort_info.moves.push(SortMove::Swap { index1: i, index2: min_index });
+                self.sort_info.swap(&mut pre_data, i, min_index);
             }
         }
     }
 
-    fn advance_sort(&mut self) {
-        if self.sort_info.is_finished() {
-            self.sort_info.move_index += 1;
-            return
-        }
-
-        match self.sort_info.moves[self.sort_info.move_index] {
-            SortMove::Swap { index1, index2 } => {
-                let tmp = self.sort_info.data[index1];
-                self.sort_info.data[index1] = self.sort_info.data[index2];
-                self.sort_info.data[index2] = tmp;
-            }
-            SortMove::Write { index, from: _, to } => {
-                self.sort_info.data[index] = to;
-            }
-            _ => {}
-        }
-
-        self.sort_info.move_index += 1;
-    }
-
-    fn withdraw_sort(&mut self) {
-        if self.sort_info.move_index == 0 {
-            return;
-        }
-
-        self.sort_info.move_index -= 1;
-        if self.sort_info.is_finished() {
-            return;
-        }
-
-        match self.sort_info.moves[self.sort_info.move_index] {
-            SortMove::Swap { index1, index2 } => {
-                let tmp = self.sort_info.data[index1];
-                self.sort_info.data[index1] = self.sort_info.data[index2];
-                self.sort_info.data[index2] = tmp;
-            }
-            SortMove::Write { index, from, .. } => {
-                self.sort_info.data[index] = from;
-            }
-            _ => {}
-        }
-    }
+    fn advance_sort(&mut self) { self.sort_info.advance_sort(); }
+    fn withdraw_sort(&mut self) { self.sort_info.withdraw_sort(); }
 
     fn get_name(&self) -> String { String::from("Selection Sort") }
     fn get_data(&self) -> Vec<u32> { self.sort_info.data.clone() }

@@ -95,35 +95,32 @@ impl SmoothSort {
     fn sift(&mut self, data: &mut Vec<u32>, orig_pshift: usize, orig_head: usize) {
         let mut pshift = orig_pshift;
         let mut head = orig_head;
-        self.sort_info.moves.push(SortMove::Read { index: head });
+        self.sort_info.read(head);
         let val = data[head];
 
         while pshift > 1 {
             let rt = head - 1;
             let lf = head - 1 - LP[pshift - 2];
 
-            self.sort_info.moves.push(SortMove::Read { index: rt });
-            self.sort_info.moves.push(SortMove::Read { index: lf });
+            self.sort_info.read(rt);
+            self.sort_info.read(lf);
 
             if val > data[lf] && val > data[rt] {
                 break;
             }
 
             if data[lf] > data[rt] {
-                self.sort_info.moves.push(SortMove::Write { index: head, from: data[head], to: data[lf] });
-                data[head] = data[lf];
+                self.sort_info.write(data, head, data[lf]);
                 head = lf;
                 pshift -= 1;
             } else {
-                self.sort_info.moves.push(SortMove::Write { index: head, from: data[head], to: data[rt] });
-                data[head] = data[rt];
+                self.sort_info.write(data, head, data[rt]);
                 head = rt;
                 pshift -= 2;
             }
         }
 
-        self.sort_info.moves.push(SortMove::Write { index: head, from: data[head], to: val });
-        data[head] = val;
+        self.sort_info.write(data, head, val);
     }
 
     fn trinkle(&mut self, data: &mut Vec<u32>, orig_p: usize, orig_pshift: usize, orig_head: usize, orig_is_trusty: bool) {
@@ -136,7 +133,7 @@ impl SmoothSort {
         while p != 1 {
             let stepson = head - LP[pshift];
 
-            self.sort_info.moves.push(SortMove::Read { index: stepson });
+            self.sort_info.read(stepson);
             if data[stepson] <= val {
                 break;
             }
@@ -145,19 +142,18 @@ impl SmoothSort {
                 let rt = head - 1;
                 let lf = head - 1 - LP[pshift - 2];
 
-                self.sort_info.moves.push(SortMove::Read { index: rt });
-                self.sort_info.moves.push(SortMove::Read { index: stepson });
-                self.sort_info.moves.push(SortMove::Read { index: lf });
-                self.sort_info.moves.push(SortMove::Read { index: stepson });
+                self.sort_info.read(rt);
+                self.sort_info.read(stepson);
+                self.sort_info.read(lf);
+                self.sort_info.read(stepson);
 
                 if data[rt] >= data[stepson] || data[lf] >= data[stepson] {
                     break;
                 }
             }
 
-            self.sort_info.moves.push(SortMove::Read { index: stepson });
-            self.sort_info.moves.push(SortMove::Write { index: head, from: data[head], to: data[stepson] });
-            data[head] = data[stepson];
+            self.sort_info.read(stepson);
+            self.sort_info.write(data, head, data[stepson]);
 
             head = stepson;
             let trail = (p & !1).trailing_zeros() as usize;
@@ -167,8 +163,7 @@ impl SmoothSort {
         }
 
         if !is_trusty {
-            self.sort_info.moves.push(SortMove::Write { index: head, from: data[head], to: val });
-            data[head] = val;
+            self.sort_info.write(data, head, val);
             self.sift(data, pshift, head);
         }
     }

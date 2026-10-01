@@ -48,12 +48,10 @@ impl InPlaceMergeSort {
 
         for i in halfway_point..high {
             let mut j = i;
-            self.sort_info.moves.push(SortMove::Read { index: j });
+            self.sort_info.read(j);
             while j > low && data[j] < data[j-1] {
-                self.sort_info.moves.push(SortMove::Swap { index1: j-1, index2: j });
-                let tmp = data[j-1];
-                data[j-1] = data[j];
-                data[j] = tmp;
+                self.sort_info.swap(data, j-1, j);
+                
                 j -= 1;
             }
         }

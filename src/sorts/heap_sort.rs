@@ -21,10 +21,7 @@ impl Sort for HeapSort {
         }
 
         for i in (0..pre_data.len()).rev() {
-            self.sort_info.moves.push(SortMove::Swap { index1: 0, index2: i });
-            let tmp = pre_data[i];
-            pre_data[i] = pre_data[0];
-            pre_data[0] = tmp;
+            self.sort_info.swap(&mut pre_data, 0, i);
 
             self.heapify(&mut pre_data, i, 0);
         }
@@ -54,23 +51,20 @@ impl HeapSort {
         let left = 2 * i + 1;
         let right = 2 * i + 2;
 
-        self.sort_info.moves.push(SortMove::Read { index: left });
-        self.sort_info.moves.push(SortMove::Read { index: largest });
+        self.sort_info.read(left);
+        self.sort_info.read(largest);
         if left < n && data[left] > data[largest] {
             largest = left;
         }
 
-        self.sort_info.moves.push(SortMove::Read { index: right });
-        self.sort_info.moves.push(SortMove::Read { index: largest });
+        self.sort_info.read(right);
+        self.sort_info.read(largest);
         if right < n && data[right] > data[largest] {
             largest = right;
         }
 
         if largest != i {
-            self.sort_info.moves.push(SortMove::Swap { index1: i, index2: largest });
-            let tmp = data[i];
-            data[i] = data[largest];
-            data[largest] = tmp;
+            self.sort_info.swap(data, i, largest);
 
             self.heapify(data, n, largest);
         }
