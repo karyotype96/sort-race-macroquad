@@ -43,6 +43,7 @@ async fn main() {
         SortType::CocktailShaker,
         SortType::Cycle,
         SortType::OddEven,
+        SortType::Pancake,
         SortType::OutOfPlaceMerge,
         SortType::InPlaceMerge,
         SortType::Heap,

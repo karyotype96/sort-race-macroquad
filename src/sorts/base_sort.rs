@@ -17,6 +17,7 @@ pub enum SortType {
     CocktailShaker,
     Cycle,
     OddEven,
+    Pancake,
     OutOfPlaceMerge,
     InPlaceMerge,
     Heap,
@@ -36,6 +37,7 @@ impl SortType {
             SortType::CocktailShaker => String::from("Cocktail Shaker Sort"),
             SortType::Cycle => String::from("Cycle Sort"),
             SortType::OddEven => String::from("Odd-Even Sort"),
+            SortType::Pancake => String::from("Pancake Sort"),
             SortType::OutOfPlaceMerge => String::from("Out-of-Place Merge Sort"),
             SortType::InPlaceMerge => String::from("In-Place Merge Sort"),
             SortType::Heap => String::from("Heap Sort"),
@@ -176,11 +178,6 @@ pub trait Sort {
                         rectangle_color = WHITE;
                     }
                 }
-                /* SortMove::Swap { index1, index2 } => {
-                    if i == index1 || i == index2 {
-                        rectangle_color = WHITE;
-                    }
-                } */
                 SortMove::Write { index, .. } => {
                     if i == index {
                         rectangle_color = WHITE;
