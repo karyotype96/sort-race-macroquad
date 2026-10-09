@@ -1,4 +1,6 @@
-use crate::sorts::base_sort::{Sort, SortMove};
+use macroquad::{camera::{Camera2D, set_camera, set_default_camera}, color::{BLUE, PURPLE, RED, WHITE, YELLOW}, math::Rect, shapes::{draw_rectangle, draw_rectangle_lines}, text::draw_text, window::{screen_height, screen_width}};
+
+use crate::{helpers::map_range::map_range, sorts::base_sort::{Sort, SortMove}};
 
 // NOTE: Hanoi Sort does not at all work the same way as other
 // sorts, so the framework for this one will have to be built
@@ -187,6 +189,90 @@ impl Sort for HanoiSort {
             s_move
         }
     }
+
+    fn draw_sort(&self, viewport_rect: Rect, position: Option<u8>) {
+        let mut camera1 = Camera2D::from_display_rect(
+            Rect {
+                x: 0.0, 
+                y: screen_height(), 
+                w: screen_width(),
+                h: -screen_height()
+            }
+        );
+        camera1.viewport = Some((
+            viewport_rect.x as i32,
+            viewport_rect.y as i32,
+            viewport_rect.w as i32,
+            viewport_rect.h as i32
+        ));
+
+        set_camera(&camera1);
+        let data = self.get_data();
+
+        let rectangle_width = screen_width() / (data.len() as f32);
+
+        for (i, &v) in data.iter().enumerate() {
+            let gradient_value = (v as f32) / data.len() as f32;
+            let len1 = self.sort_info.data[0].len();
+            let len2 = self.sort_info.data[1].len();
+
+            let mut rectangle_color = RED;
+            if i >= len1 {
+                rectangle_color = PURPLE;
+            }
+            if i >= len1 + len2 {
+                rectangle_color = BLUE;
+            }
+
+            match self.get_current_move() {
+                SortMove::None => {}
+                SortMove::Read { index } => {
+                    if i == index {
+                        rectangle_color = WHITE;
+                    }
+                }
+                SortMove::Write { index, .. } => {
+                    if i == index {
+                        rectangle_color = WHITE;
+                    }
+                }
+            }
+
+            let rectangle_height = map_range(gradient_value, 0.0, 1.0, 20.0, screen_height() - 50.0);
+
+            let x_offset = (i as f32) * rectangle_width;
+
+            draw_rectangle(
+                x_offset, 
+                screen_height() - rectangle_height, 
+                rectangle_width, rectangle_height, 
+                rectangle_color
+            );
+
+            draw_rectangle_lines(0.0, 0.0, screen_width(), screen_height(), 10.0, WHITE);
+            let reads = self.get_reads();
+            let writes = self.get_writes();
+            let percentage = (self.get_move_index() * 100 / self.get_move_count()).clamp(0, 100);
+            draw_text(format!("{} ({} reads, {} writes, {} moves total): {}% done", self.get_name(), reads, writes, reads + writes, percentage), 25.0, 40.0, 42.0, WHITE);
+
+            if self.get_move_index() >= self.get_move_count(){
+                match position {
+                    Some(pos) => {
+                        let pos_suffix = match pos+1 {
+                            1 => "st",
+                            2 => "nd",
+                            3 => "rd",
+                            _ => "th"
+                        };
+                        draw_text(format!("Finished ({}{} place)!", pos+1, pos_suffix), 25.0, 80.0, 42.0, YELLOW);
+                    }
+                    None => { draw_text("Finished!", 25.0, 80.0, 42.0, YELLOW); }
+                }
+            }
+        }
+
+        set_default_camera();
+    }
 }
 
 impl HanoiSort {
@@ -208,15 +294,6 @@ impl HanoiSort {
 
         if depth == 1 {
             self.sort_info.move_element(towers, from, to);
-            /*
-            match towers[from].pop() {
-                Some(data) => {
-                    self.sort_info.move_element(towers, from, to);
-                    towers[to].push(data);
-                }
-                None => {}
-            }
-            */
             return;
         }
 
@@ -232,13 +309,6 @@ impl HanoiSort {
 
         self.move_stack_to(towers, from, next_to, depth-1);
         self.sort_info.move_element(towers, from, to);
-        /* match towers[from].pop() {
-            Some(data) => {
-                self.sort_info.move_element(towers, from, to);
-                towers[to].push(data);
-            }
-            None => {}
-        } */
         self.move_stack_to(towers, next_to, to, depth-1);
     }
 }
