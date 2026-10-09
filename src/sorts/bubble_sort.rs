@@ -22,13 +22,6 @@ impl Sort for BubbleSort {
                 if pre_data[j] > pre_data[j+1] {
                     is_ordered = false;
                     self.sort_info.swap(&mut pre_data, j, j+1);
-                    /* let tmp = pre_data[j];
-                    pre_data[j] = pre_data[j+1];
-                    pre_data[j+1] = tmp;
-                    self.sort_info.moves.push(SortMove::Swap {
-                        index1: j,
-                        index2: j+1,
-                    }); */
                 }
             }
             if is_ordered {

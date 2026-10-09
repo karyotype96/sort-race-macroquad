@@ -15,6 +15,8 @@ The sort screen itself has its own keyboard controls:
 - **Space**: Play/pause the animation
 - **Arrow keys**: Move forward/back through the individual read/write operations
 - **R**: Reset all sorts - note that this will re-randomize the inputs, depending on which starting input you chose
+- **T**: Activate "Turbo Mode", which speeds the sorting speed up by a factor of 10
+- **Shift + T**: Activate "Super Turbo Mode", which speeds it up by a factor of 100
 - **Q**: Go back to the previous screen
 
 Finally, to quit the application, press **Esc** at any time.

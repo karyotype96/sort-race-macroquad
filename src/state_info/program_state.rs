@@ -1,6 +1,6 @@
 use std::ops::{Shr};
 
-use macroquad::{input::{KeyCode, is_key_pressed}, rand::ChooseRandom};
+use macroquad::{input::{KeyCode, is_key_down, is_key_pressed}, rand::ChooseRandom};
 
 use crate::{helpers::viewports::get_viewports, sorts::{
     american_flag_sort::AmericanFlagSort, base_sort::{Sort, SortType::{self}}, bubble_sort::BubbleSort, cocktail_shaker_sort::CocktailShakerSort, comb_sort::CombSort, cycle_sort::CycleSort, gravity_sort::GravitySort, hanoi_sort::HanoiSort, heap_sort::HeapSort, insertion_sort::*, merge_sort_ip::InPlaceMergeSort, merge_sort_oop::OutOfPlaceMergeSort, odd_even_sort::OddEvenSort, pancake_sort::PancakeSort, quick_sort::QuickSortRP, radix_sort::RadixSortLSD, selection_sort::*, shell_sort::ShellSort, smooth_sort::SmoothSort,
@@ -248,20 +248,40 @@ impl WatchSortsState {
         self.positions = position_infos;
     }
 
+    pub fn is_turbo_mode(&self) -> bool {
+        is_key_down(KeyCode::T)
+    }
+
+    pub fn is_super_turbo_mode(&self) -> bool {
+        is_key_down(KeyCode::T) && (is_key_down(KeyCode::LeftShift) || is_key_down(KeyCode::RightShift))
+    }
+
     pub fn advance_frame(&mut self) {
-        self.frame += 1;
-
-        if self.play_speed > 1.0 {
-            if self.frame >= self.play_speed as usize {
-                self.step_forward();
-                self.frame = 0;
-            }
+        let count = if self.is_super_turbo_mode() { 
+            100 
         } else {
-            let mut count = 0.0;
+            if self.is_turbo_mode() {
+                10
+            } else {
+                1
+            }
+        };
 
-            while count < 1.0 && self.sort_frame < self.max_frame {
-                self.step_forward();
-                count += self.play_speed;
+        for _ in 0..count {
+            self.frame += 1;
+
+            if self.play_speed > 1.0 {
+                if self.frame >= self.play_speed as usize {
+                    self.step_forward();
+                    self.frame = 0;
+                }
+            } else {
+                let mut count = 0.0;
+
+                while count < 1.0 && self.sort_frame < self.max_frame {
+                    self.step_forward();
+                    count += self.play_speed;
+                }
             }
         }
     }
