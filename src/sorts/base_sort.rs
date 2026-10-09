@@ -28,6 +28,7 @@ pub enum SortType {
     Shell,
     RadixLSD(u32),
     AmericanFlag(u32),
+    Hanoi,
 }
 
 impl SortType {
@@ -50,6 +51,7 @@ impl SortType {
             SortType::Shell => String::from("Shell Sort"),
             SortType::RadixLSD(radix) => format!("Radix Sort (Base {})", radix),
             SortType::AmericanFlag(bucket_count) => format!("American Flag Sort ({} Buckets)", bucket_count),
+            SortType::Hanoi => format!("Hanoi Sort")
         }
     }
 }
@@ -112,7 +114,7 @@ impl SortBase {
         self.moves.push(SortMove::Read { index });
     }
 
-    pub fn swap(&mut self, data: &mut Vec<u32>, index1: usize, index2: usize) {
+    pub fn swap(&mut self, data: &mut [u32], index1: usize, index2: usize) {
         // self.moves.push(SortMove::Swap{ index1, index2 });
         self.moves.push(SortMove::Read { index: index1 });
         let tmp = data[index1];
@@ -190,7 +192,7 @@ pub trait Sort {
                 }
             }
 
-            let rectangle_height = map_range(gradient_value, 0.0, 1.0, 0.0, screen_height() - 50.0);
+            let rectangle_height = map_range(gradient_value, 0.0, 1.0, 20.0, screen_height() - 50.0);
 
             let x_offset = (i as f32) * rectangle_width;
 
@@ -204,7 +206,8 @@ pub trait Sort {
             draw_rectangle_lines(0.0, 0.0, screen_width(), screen_height(), 10.0, WHITE);
             let reads = self.get_reads();
             let writes = self.get_writes();
-            draw_text(format!("{} ({} reads, {} writes, {} moves total)", self.get_name(), reads, writes, reads + writes), 25.0, 50.0, 48.0, WHITE);
+            let percentage = (self.get_move_index() * 100 / self.get_move_count()).clamp(0, 100);
+            draw_text(format!("{} ({} reads, {} writes, {} moves total): {}% done", self.get_name(), reads, writes, reads + writes, percentage), 25.0, 40.0, 42.0, WHITE);
 
             if self.get_move_index() >= self.get_move_count(){
                 match position {
@@ -215,9 +218,9 @@ pub trait Sort {
                             3 => "rd",
                             _ => "th"
                         };
-                        draw_text(format!("Finished ({}{} place)!", pos+1, pos_suffix), 25.0, 100.0, 48.0, YELLOW);
+                        draw_text(format!("Finished ({}{} place)!", pos+1, pos_suffix), 25.0, 80.0, 42.0, YELLOW);
                     }
-                    None => { draw_text("Finished!", 25.0, 100.0, 48.0, YELLOW); }
+                    None => { draw_text("Finished!", 25.0, 80.0, 42.0, YELLOW); }
                 }
             }
         }

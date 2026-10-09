@@ -58,13 +58,14 @@ async fn main() {
         SortType::RadixLSD(16),
         SortType::AmericanFlag(64),
         SortType::AmericanFlag(128),
+        SortType::Hanoi,
     ];
     
     let mut select_sorts_state = SelectSortsState {
         list_type: 0,
         sorts: all_sorts.iter().map(|_| false).collect(),
         ops_per_second: 1.0,
-        list_size_exponent: 4.0,
+        list_size_exponent: 3.0,
     };
 
     let list_type_options = &["Fully Random", "Slightly Random", "Reversed", "Bit Reversed", "Few Unique"];
@@ -134,7 +135,7 @@ async fn main() {
                         ui.label(None, "List Size");
                         ui.slider(hash!("list size slider"),
                             "",
-                            std::ops::Range { start: 4.0, end: 10.0 },
+                            std::ops::Range { start: 3.0, end: 10.0 },
                             &mut select_sorts_state.list_size_exponent
                         );
                         ui.label(None, &format!("List size: {} items", 2_i32.pow(select_sorts_state.list_size_exponent.floor() as u32)))

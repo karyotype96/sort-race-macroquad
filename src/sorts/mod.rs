@@ -1,5 +1,4 @@
 pub mod base_sort;
-
 pub mod bubble_sort;
 pub mod cocktail_shaker_sort;
 pub mod selection_sort;
@@ -17,3 +16,4 @@ pub mod comb_sort;
 pub mod shell_sort;
 pub mod radix_sort;
 pub mod american_flag_sort;
+pub mod hanoi_sort;
